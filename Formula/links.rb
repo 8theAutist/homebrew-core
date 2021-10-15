@@ -1,8 +1,8 @@
 class Links < Formula
   desc "Lynx-like WWW browser that supports tables, menus, etc."
   homepage "http://links.twibright.com/"
-  url "http://links.twibright.com/download/links-2.22.tar.bz2"
-  sha256 "0364986b3a7f1e8e3171bea362b53f71e1dd3360a8842d66fdc65580ebc2084d"
+  url "http://links.twibright.com/download/links-2.25.tar.gz"
+  sha256 "5c0b3b0b8fe1f3c8694f5fb7fbdb19c63278ac68ae4646da69b49640b20283b1"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,10 +11,11 @@ class Links < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "240394fc7d383abd1dc92b09eef316444b9143d3c1f5ecfe4ec6d9aabffbb879"
-    sha256 cellar: :any, big_sur:       "7244e77024332dc3c3564cc12afa15a4ab0a3fb95cbb053f85f7816e48e19c45"
-    sha256 cellar: :any, catalina:      "fd1264189ca279e0d73395410babcbe53ca75820a6ba25c97d85da856e515fdf"
-    sha256 cellar: :any, mojave:        "3a54b72901034d1e251059266041854c030429622418e61768c9b8a20486e5cb"
+    sha256 cellar: :any,                 arm64_big_sur: "b3e9ad1d3617acdbbc86edbc90f429083130a51eb6ea26b809774b8eaf39fa53"
+    sha256 cellar: :any,                 big_sur:       "9d7178901279a9ee80768056fa4f2b04676777d5ef2063c9f8a8c2b9f98a8906"
+    sha256 cellar: :any,                 catalina:      "1eaa9411f73c61b7a82ee8d16b94bd7c8c0dde86e1eec953c5ce5872394ee073"
+    sha256 cellar: :any,                 mojave:        "c12924230d58173c263dcdd827ecb4d9f44bb1e654a191ff5882a46330125cdf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f6bbd8bae1431f150cc3153f2731cf41cf4fbf06b59033a28b5ac8b72906a792"
   end
 
   depends_on "pkg-config" => :build

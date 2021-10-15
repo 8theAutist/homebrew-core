@@ -1,9 +1,17 @@
 class Spotbugs < Formula
   desc "Tool for Java static analysis (FindBugs's successor)"
   homepage "https://spotbugs.github.io/"
-  url "https://repo.maven.apache.org/maven2/com/github/spotbugs/spotbugs/4.2.3/spotbugs-4.2.3.tgz"
-  sha256 "58aebdef157dea61a4a92dd872a54725d052f82e8cae057e9714403d5d403291"
+  url "https://repo.maven.apache.org/maven2/com/github/spotbugs/spotbugs/4.4.2/spotbugs-4.4.2.tgz"
+  sha256 "459c3b245718338c010c4e2444a5c40900e8455b1127280a7e2515e60212dea1"
   license "LGPL-2.1-or-later"
+
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "073f01f87bc1678ecf70d08d368d1c2ca364246a3541763c82f23951d478080e"
+    sha256 cellar: :any_skip_relocation, big_sur:       "073f01f87bc1678ecf70d08d368d1c2ca364246a3541763c82f23951d478080e"
+    sha256 cellar: :any_skip_relocation, catalina:      "073f01f87bc1678ecf70d08d368d1c2ca364246a3541763c82f23951d478080e"
+    sha256 cellar: :any_skip_relocation, mojave:        "073f01f87bc1678ecf70d08d368d1c2ca364246a3541763c82f23951d478080e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ef7b7973ca86f296ee764214853dd75f2afb6fc4a2a72f733e88fa8d18e17932"
+  end
 
   head do
     url "https://github.com/spotbugs/spotbugs.git"
@@ -11,9 +19,9 @@ class Spotbugs < Formula
     depends_on "gradle" => :build
   end
 
-  bottle :unneeded
-
   depends_on "openjdk"
+
+  conflicts_with "fb-client", because: "both install a `fb` binary"
 
   def install
     ENV["JAVA_HOME"] = Formula["openjdk"].opt_prefix

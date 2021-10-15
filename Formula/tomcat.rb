@@ -1,12 +1,14 @@
 class Tomcat < Formula
   desc "Implementation of Java Servlet and JavaServer Pages"
   homepage "https://tomcat.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-10/v10.0.5/bin/apache-tomcat-10.0.5.tar.gz"
-  mirror "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.5/bin/apache-tomcat-10.0.5.tar.gz"
-  sha256 "7770d6d15a664abc0c4355f75306ed4f60b63395493db082fd61c4145c3d1d63"
+  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-10/v10.0.12/bin/apache-tomcat-10.0.12.tar.gz"
+  mirror "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.12/bin/apache-tomcat-10.0.12.tar.gz"
+  sha256 "d346b1bf76495b794438c28178d90d4d3c6830c43a22fa836de49db6a2997c06"
   license "Apache-2.0"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, all: "c21228ef35c66009179b04cbe966d120b3e6508edec7c588fba9a53f22137cb8"
+  end
 
   depends_on "openjdk"
 
@@ -16,32 +18,24 @@ class Tomcat < Formula
 
     # Install files
     prefix.install %w[NOTICE LICENSE RELEASE-NOTES RUNNING.txt]
+
+    pkgetc.install Dir["conf/*"]
+    (buildpath/"conf").rmdir
+    libexec.install_symlink pkgetc => "conf"
+
     libexec.install Dir["*"]
     (bin/"catalina").write_env_script "#{libexec}/bin/catalina.sh", JAVA_HOME: Formula["openjdk"].opt_prefix
   end
 
-  plist_options manual: "catalina run"
-
-  def plist
+  def caveats
     <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Disabled</key>
-          <false/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/catalina</string>
-            <string>run</string>
-          </array>
-          <key>KeepAlive</key>
-          <true/>
-        </dict>
-      </plist>
+      Configuration files: #{pkgetc}
     EOS
+  end
+
+  service do
+    run [opt_bin/"catalina", "run"]
+    keep_alive true
   end
 
   test do

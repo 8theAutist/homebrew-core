@@ -1,11 +1,11 @@
 class Notmuch < Formula
   desc "Thread-based email index, search, and tagging"
   homepage "https://notmuchmail.org/"
-  url "https://notmuchmail.org/releases/notmuch-0.31.4.tar.xz"
-  sha256 "8661b66567660fd630af10c4647c30327fdd1b34a988cab80d614328a5b74f55"
+  # NOTE: Keep this in sync with notmuch-mutt.
+  url "https://notmuchmail.org/releases/notmuch-0.33.2.tar.xz"
+  sha256 "244892f6ab52a84f6b013b387cd6652d461effd36b14ef9e576604b5850b2cae"
   license "GPL-3.0-or-later"
-  revision 2
-  head "https://git.notmuchmail.org/git/notmuch", using: :git
+  head "https://git.notmuchmail.org/git/notmuch", using: :git, branch: "master"
 
   livecheck do
     url "https://notmuchmail.org/releases/"
@@ -13,13 +13,15 @@ class Notmuch < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "ec4cd07627fdc124d4fce54dc2576f2cde5252019132874db5ec3c5158a80efd"
-    sha256 cellar: :any, big_sur:       "2170961b3adb7ac6c14b0420cd9689aa09c3ee2c5ff82c47b4700545043a7324"
-    sha256 cellar: :any, catalina:      "0c4601ae54da0058336e442102a06e8be58e67d348279b81847868fdb4f95c65"
-    sha256 cellar: :any, mojave:        "e74fa9eac9cc866447412d343de3896a36139894b5cc10db9d02d358d463e9b3"
+    sha256 cellar: :any,                 arm64_big_sur: "19a4915d3f8c1aa97bc78e77121cbdbe11a4647415865f4b38fb2dcf147beee3"
+    sha256 cellar: :any,                 big_sur:       "2052642bf19bff4a20e4a4103b24900c3d839817653a591cc4eb339a17c560aa"
+    sha256 cellar: :any,                 catalina:      "4edc75b0e0a4afb9077dbcfb2d0f424c042ba034d72ba5b8b6d2bc2d5ee4d939"
+    sha256 cellar: :any,                 mojave:        "0857fa398d721fd77960c3150332f2b50b665e7505a0c726f2207c4f1ec956ac"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b59b68037db892584372fb30f15ba88673755158a5ac514435cc38495dfe0dbf"
   end
 
   depends_on "doxygen" => :build
+  depends_on "emacs" => :build
   depends_on "libgpg-error" => :build
   depends_on "pkg-config" => :build
   depends_on "sphinx-doc" => :build
@@ -43,10 +45,12 @@ class Notmuch < Formula
     ]
 
     ENV.append_path "PYTHONPATH", Formula["sphinx-doc"].opt_libexec/"lib/python3.9/site-packages"
+    ENV.cxx11 if OS.linux?
 
     system "./configure", *args
     system "make", "V=1", "install"
 
+    elisp.install Dir["emacs/*.el"]
     bash_completion.install "completion/notmuch-completion.bash"
 
     (prefix/"vim/plugin").install "vim/notmuch.vim"

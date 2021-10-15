@@ -1,15 +1,20 @@
 class Kcgi < Formula
   desc "Minimal CGI and FastCGI library for C/C++"
-  homepage "https://kristaps.bsd.lv/kcgi"
-  url "https://kristaps.bsd.lv/kcgi/snapshots/kcgi-0.12.4.tgz"
-  sha256 "e9950cda9a118a778b79bcde5a5d585a78dec4cb259731e6d9e866bcae8f3346"
+  homepage "https://kristaps.bsd.lv/kcgi/"
+  url "https://kristaps.bsd.lv/kcgi/snapshots/kcgi-0.13.0.tgz"
+  sha256 "d886e5700f5ec72b00cb668e9f06b7b3906b6ccdc5bab4c89e436d4cc4c0c7a1"
   license "ISC"
 
+  livecheck do
+    url "https://kristaps.bsd.lv/kcgi/snapshots/"
+    regex(/href=.*?kcgi[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "cf19665f8b909fc185747aeda39a2eccb74cbd5159cd8b16a4d170055001ffce"
-    sha256 cellar: :any_skip_relocation, big_sur:       "ffce6f2eb26e7855808b3528077921b371cbded63bc54ba4f640d90ff766d888"
-    sha256 cellar: :any_skip_relocation, catalina:      "b215aed52ae23d42a8cb74d75195443cfff9666503863403f910b5be9fe844e3"
-    sha256 cellar: :any_skip_relocation, mojave:        "ba732464c3b7a7e1c511ee93b4b03460df9979a72846511962385cc642af36fb"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "477a66993f541e9b595996d577c766c5eb205730b97885853322b32bb3d66285"
+    sha256 cellar: :any_skip_relocation, big_sur:       "aea0950090e27a079ea4f104a726676c13f01de6c56284b2f98e8bfd1a208e21"
+    sha256 cellar: :any_skip_relocation, catalina:      "de0d79ace2d35397df1fa1e8d7e09128372d9c7989992675ae835d2d21a502e8"
+    sha256 cellar: :any_skip_relocation, mojave:        "a4779378456da9d3887e45136c69df85d47bef12d57b7f8903f840f4c2b12002"
   end
 
   depends_on "bmake" => :build

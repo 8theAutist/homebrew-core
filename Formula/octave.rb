@@ -1,17 +1,18 @@
 class Octave < Formula
   desc "High-level interpreted language for numerical computing"
   homepage "https://www.gnu.org/software/octave/index.html"
-  url "https://ftp.gnu.org/gnu/octave/octave-6.2.0.tar.xz"
-  mirror "https://ftpmirror.gnu.org/octave/octave-6.2.0.tar.xz"
-  sha256 "7b721324cccb3eaeb4efb455508201ac8ccbd200f77106f52342f9ab7f022d1a"
+  url "https://ftp.gnu.org/gnu/octave/octave-6.3.0.tar.xz"
+  mirror "https://ftpmirror.gnu.org/octave/octave-6.3.0.tar.xz"
+  sha256 "fb472cb957c748670391cbc3385ff230cf44832bc314fee359e43c69cf9da5ef"
   license "GPL-3.0-or-later"
-  revision 2
+  revision 1
 
   bottle do
-    sha256 arm64_big_sur: "63f47974ce06e29e374f1301cfe8a037607b50d3ba1de874f0440ce3c06245ac"
-    sha256 big_sur:       "8b0438e418db6d1b5b86716ccb4dc9a80488687994416eeaafae15fa70aae5cd"
-    sha256 catalina:      "29d8d18c1a661f3fd3711a2fa95e2e03991513ed42399cd796fc1bc49298af24"
-    sha256 mojave:        "4e4f2ff5b9e24d69b0d9018669cf5d89ea3bc6d1c3ced782129776a821e972c2"
+    sha256 arm64_big_sur: "0b7a9156e2160caa28bf0d545b8e627582b9470c4517c19966de6d5e24e6141b"
+    sha256 big_sur:       "088f112687c0706417c97f8ea5492c64a46dc95577c27ed78d27ce5573d5f03e"
+    sha256 catalina:      "4321a0c3d4625f4503bd41e0b02b39f1a7993b6e3d6ebb1a216a403b8d366b1c"
+    sha256 mojave:        "1c4b0f3ec21cd8bf37154c3e9fb58a2174f8db5fc00be726427919160b40417d"
+    sha256 x86_64_linux:  "b9713f64b36cee185b8b580b5641724a371bb6529fa3dd906f6fde2142b6b812"
   end
 
   head do
@@ -59,8 +60,17 @@ class Octave < Formula
 
   uses_from_macos "curl"
 
+  on_linux do
+    depends_on "autoconf"
+    depends_on "automake"
+    depends_on "mesa"
+    depends_on "mesa-glu"
+  end
+
   # Dependencies use Fortran, leading to spurious messages about GCC
   cxxstdlib_check :skip
+
+  fails_with gcc: "5"
 
   def install
     # Default configuration passes all linker flags to mkoctfile, to be
@@ -81,19 +91,36 @@ class Octave < Formula
     ENV.append "LDFLAGS", "-F#{Formula["qt@5"].opt_lib}"
 
     system "./bootstrap" if build.head?
-    system "./configure", "--prefix=#{prefix}",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--enable-link-all-dependencies",
-                          "--enable-shared",
-                          "--disable-static",
-                          "--with-hdf5-includedir=#{Formula["hdf5"].opt_include}",
-                          "--with-hdf5-libdir=#{Formula["hdf5"].opt_lib}",
-                          "--with-java-homedir=#{Formula["openjdk"].opt_prefix}",
-                          "--with-x=no",
-                          "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas",
-                          "--with-portaudio",
-                          "--with-sndfile"
+    args = ["--prefix=#{prefix}",
+            "--disable-dependency-tracking",
+            "--disable-silent-rules",
+            "--enable-link-all-dependencies",
+            "--enable-shared",
+            "--disable-static",
+            "--with-hdf5-includedir=#{Formula["hdf5"].opt_include}",
+            "--with-hdf5-libdir=#{Formula["hdf5"].opt_lib}",
+            "--with-java-homedir=#{Formula["openjdk"].opt_prefix}",
+            "--with-x=no",
+            "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas",
+            "--with-portaudio",
+            "--with-sndfile"]
+
+    if OS.linux?
+      # Explicitly specify aclocal and automake without versions
+      args << "ACLOCAL=aclocal"
+      args << "AUTOMAKE=automake"
+
+      # Mesa OpenGL location must be supplied by LDFLAGS on Linux
+      args << "LDFLAGS=-L#{Formula["mesa"].opt_lib} -L#{Formula["mesa-glu"].opt_lib}"
+
+      # Docs building is broken on Linux
+      args << "--disable-docs"
+
+      # Need to regenerate aclocal.m4 so that it will work with brewed automake
+      system "aclocal"
+    end
+
+    system "./configure", *args
     system "make", "all"
 
     # Avoid revision bumps whenever fftw's, gcc's or OpenBLAS' Cellar paths change

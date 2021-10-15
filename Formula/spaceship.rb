@@ -1,12 +1,14 @@
 class Spaceship < Formula
   desc "Zsh prompt for Astronauts"
-  homepage "https://denysdovhan.com/spaceship-prompt"
-  url "https://github.com/denysdovhan/spaceship-prompt/archive/v3.11.2.tar.gz"
-  sha256 "8a4ed8fd84378a3f6566355a06eb877cd217afc48be69dee08041fd5e46b8e2d"
+  homepage "https://spaceship-prompt.sh"
+  url "https://github.com/spaceship-prompt/spaceship-prompt/archive/v3.15.0.tar.gz"
+  sha256 "f4ccccc266fd4ce0d6616c09440def39e7fc2f2a5020f71df5a8d50712c76898"
   license "MIT"
-  head "https://github.com/denysdovhan/spaceship-prompt.git"
+  head "https://github.com/spaceship-prompt/spaceship-prompt.git", branch: "master"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, all: "e283232d5b5b4695526dd2ad3796542e18cb03c262da79d3560d1f67652b6129"
+  end
 
   depends_on "zsh" => :test
 

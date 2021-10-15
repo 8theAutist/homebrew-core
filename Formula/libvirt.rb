@@ -1,9 +1,10 @@
 class Libvirt < Formula
   desc "C virtualization API"
   homepage "https://www.libvirt.org"
-  url "https://libvirt.org/sources/libvirt-7.2.0.tar.xz"
-  sha256 "01f459d0c7ba5009622a628dba1a026200e8f4a299fea783b936a71d7e0ed1d0"
+  url "https://libvirt.org/sources/libvirt-7.8.0.tar.xz"
+  sha256 "a727cd0a47bfa24fa7de2874d23f3a9f9f02ceb6b49ba15288f6d9a098b19921"
   license all_of: ["LGPL-2.1-or-later", "GPL-2.0-or-later"]
+  head "https://github.com/libvirt/libvirt.git", branch: "master"
 
   livecheck do
     url "https://libvirt.org/sources/"
@@ -11,15 +12,13 @@ class Libvirt < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "146d2eac4517371391bac247d094f1bc9cb58260ed318e5d626206a957291114"
-    sha256 big_sur:       "9101f862c4abd5717abc26df984a98dd6d82f5167534b40a940a19008328bdaf"
-    sha256 catalina:      "d5616442169acbc6313ee7fe9c683c7b7cc8736dbdd05652f97baac8d837b807"
-    sha256 mojave:        "0f621cff7139e5ba348bbedad1c1fd39484aa0bad517a00427186eb25b3b6b65"
+    sha256 arm64_big_sur: "7c105ea503b711342411bcecdb237b6be0c9bdc0007478c86e1eb181f8550d7f"
+    sha256 big_sur:       "5fa6ba649a3e151cb3a98ee397b043f8aca153d24329d1ff00f286de7a58ac9e"
+    sha256 catalina:      "4cb61a8f7c2866797bb89894b72152f39735af0b90bbaddd30a5f475a5955d70"
+    sha256 mojave:        "70946ecc63511165d972462a20b27cbbc743c85aea7ce1bfdcf504122d277f87"
+    sha256 x86_64_linux:  "b304884ef4b54ecbdd974c5ad423862c4b0c4c1e89b4a9a45dfc952e374929bc"
   end
 
-  head do
-    url "https://github.com/libvirt/libvirt.git"
-  end
   depends_on "docutils" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
@@ -28,7 +27,9 @@ class Libvirt < Formula
   depends_on "python@3.9" => :build
   depends_on "gettext"
   depends_on "glib"
+  depends_on "gnu-sed"
   depends_on "gnutls"
+  depends_on "grep"
   depends_on "libgcrypt"
   depends_on "libiscsi"
   depends_on "libssh2"
@@ -61,34 +62,10 @@ class Libvirt < Formula
     end
   end
 
-  plist_options manual: "libvirtd"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>EnvironmentVariables</key>
-          <dict>
-            <key>PATH</key>
-            <string>#{HOMEBREW_PREFIX}/bin</string>
-          </dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{sbin}/libvirtd</string>
-            <string>-f</string>
-            <string>#{etc}/libvirt/libvirtd.conf</string>
-          </array>
-          <key>KeepAlive</key>
-          <true/>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_sbin/"libvirtd", "-f", etc/"libvirt/libvirtd.conf"]
+    keep_alive true
+    environment_variables PATH: HOMEBREW_PREFIX/"bin"
   end
 
   test do

@@ -2,16 +2,16 @@ class Aom < Formula
   desc "Codec library for encoding and decoding AV1 video streams"
   homepage "https://aomedia.googlesource.com/aom"
   url "https://aomedia.googlesource.com/aom.git",
-      tag:      "v3.0.0",
-      revision: "d853caa2ab62d161e5edf344ffee7b597449dc0d"
+      tag:      "v3.1.3",
+      revision: "ce9a40ce01ade9d6fea1721c82645804a2f39b00"
   license "BSD-2-Clause"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_big_sur: "e0571295e7c45b346677673f1ca8e4b62cfa1f17ef070c225fa8251b707c1f11"
-    sha256 cellar: :any, big_sur:       "67a3761a41430e4c3b314d7c6b02225682e3907fd476b38b2e3fb736c5006e3c"
-    sha256 cellar: :any, catalina:      "57b3be90bfbebeb28f29c64ee2a9c0d0c520827ed0f879f89280bb60cfc5238c"
-    sha256 cellar: :any, mojave:        "9c8b6d66053c671b354ef7ba62f244d8ab0d65b4409f6c0798db1c22594cee49"
+    sha256 cellar: :any,                 arm64_big_sur: "6e289d13b26ea36b824c282e2dda13182d044769e5de4808cc6b400f82893f3e"
+    sha256 cellar: :any,                 big_sur:       "a1137d103b78465922ecf9dac575c559ed764cda3067e3450dcb9074e761ff73"
+    sha256 cellar: :any,                 catalina:      "d94727375093bf891d34248f9d7aecbe2ce690bebe85fe7f3b876e1ed682e404"
+    sha256 cellar: :any,                 mojave:        "d6af55b723ccfc6ff17d3d4df30d47076b8ce5aebeafc65fde4b2f53b956fce1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cdebdea0ad7dbe01b3aa89d268ef8ac63a712a5dced295d6c68b276240d9c6b7"
   end
 
   depends_on "cmake" => :build

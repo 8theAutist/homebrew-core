@@ -3,34 +3,145 @@ class Awscli < Formula
 
   desc "Official Amazon AWS command-line interface"
   homepage "https://aws.amazon.com/cli/"
-  url "https://github.com/aws/aws-cli/archive/2.2.0.tar.gz"
-  sha256 "cef019bd932570362cb410c1788382f77d56180626c54364914e8ae016273842"
   license "Apache-2.0"
-  head "https://github.com/aws/aws-cli.git", branch: "v2"
+
+  stable do
+    url "https://github.com/aws/aws-cli/archive/2.2.45.tar.gz"
+    sha256 "76764a79939365d951f15aad7f3374a114f0b526393dd8029648afcaa2f565cd"
+
+    # Botocore v2 is not available on PyPI and version commits are not tagged. One way to update:
+    # 1. Get `botocore` version at https://github.com/aws/aws-cli/blob/#{version}/setup.cfg
+    # 2. Get commit matching version at https://github.com/boto/botocore/commits/v2
+    resource "botocore" do
+      url "https://github.com/boto/botocore/archive/550582aa11c67a99414172d86cb2df2a91f4747c.tar.gz"
+      sha256 "cc287b14779d296a3cbe431143fe1ce78a10c09243a826276e67f20c2401bd5c"
+      version "2.0.0dev153"
+    end
+  end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "58855c7c41b00f69866dad5cc2bc7add21e85ffbe4f043694ad657a2540d75c0"
-    sha256               big_sur:       "c7a92e98537f92f53a9c9ed8d551fa60cae1ccf303c36f5aa1f7b9077984b4f0"
-    sha256               catalina:      "f5a8972e6188061f7a2a3364eb35fd8de7b77f4b92117fb36fe93335e58de642"
-    sha256               mojave:        "dc38c0b30e4853c26fafce8491ee73a5f2f5f17b73acc98fb0e96f3bcf01e28c"
+    sha256 cellar: :any,                 arm64_big_sur: "834f44aae346c3236819ac17673a3a2cb654fbaa415ea8274db4a46ca2deeaa0"
+    sha256 cellar: :any,                 big_sur:       "af2baef82d2e0aa0e064c4b71f24013cbb4a2ae1ae8394593eedeb6d01d0e44b"
+    sha256 cellar: :any,                 catalina:      "fab361b3e3762458d4c3f41d46eab728b4d3ee30c95e0bf7604bc27d8671cb07"
+    sha256 cellar: :any,                 mojave:        "97a34bee4d8493f750d02349f3fb0cff11fdeeaf40d45e63796bc4efa81c65b8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3cc80fb759350352b35199d7e63e7a166d50b984dcb81bcd985e0068f7c965ec"
+  end
+
+  head do
+    url "https://github.com/aws/aws-cli.git", branch: "v2"
+
+    resource "botocore" do
+      url "https://github.com/boto/botocore.git", branch: "v2"
+    end
   end
 
   depends_on "cmake" => :build
   depends_on "python@3.9"
+  depends_on "six"
 
   uses_from_macos "groff"
 
-  on_linux do
-    depends_on "libyaml"
+  # Python resources should be updated based on setup.cfg. One possible way is:
+  # 1. Download source tarball
+  # 2. Remove `botocore` from setup.cfg
+  # 3. At top of source directory, run `pipgrip . --sort`
+  # 4. Ignore old `botocore` v1 and `six`. Update all other PyPI packages
+
+  resource "awscrt" do
+    url "https://files.pythonhosted.org/packages/9f/e2/5a0b096fb73f2b33ad2cc7392d33d365d3b78b295b21dda5792dd481b38f/awscrt-0.11.24.tar.gz"
+    sha256 "b8aa68bca404bf0085be0570eff5b542d01f7e8e3c0f9b0859abfe5e070162ff"
+  end
+
+  resource "cffi" do
+    url "https://files.pythonhosted.org/packages/2e/92/87bb61538d7e60da8a7ec247dc048f7671afe17016cd0008b3b710012804/cffi-1.14.6.tar.gz"
+    sha256 "c9a875ce9d7fe32887784274dd533c57909b7b1dcadcc128a2ac21331a9765dd"
+  end
+
+  resource "colorama" do
+    url "https://files.pythonhosted.org/packages/82/75/f2a4c0c94c85e2693c229142eb448840fba0f9230111faa889d1f541d12d/colorama-0.4.3.tar.gz"
+    sha256 "e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"
+  end
+
+  resource "cryptography" do
+    url "https://files.pythonhosted.org/packages/d4/85/38715448253404186029c575d559879912eb8a1c5d16ad9f25d35f7c4f4c/cryptography-3.3.2.tar.gz"
+    sha256 "5a60d3780149e13b7a6ff7ad6526b38846354d11a15e21068e57073e29e19bed"
+  end
+
+  resource "distro" do
+    url "https://files.pythonhosted.org/packages/a6/a4/75064c334d8ae433445a20816b788700db1651f21bdb0af33db2aab142fe/distro-1.5.0.tar.gz"
+    sha256 "0e58756ae38fbd8fc3020d54badb8eae17c5b9dcbed388b17bb55b8a5928df92"
+  end
+
+  resource "docutils" do
+    url "https://files.pythonhosted.org/packages/93/22/953e071b589b0b1fee420ab06a0d15e5aa0c7470eb9966d60393ce58ad61/docutils-0.15.2.tar.gz"
+    sha256 "a2aeea129088da402665e92e0b25b04b073c04b2dce4ab65caaa38b7ce2e1a99"
+  end
+
+  resource "jmespath" do
+    url "https://files.pythonhosted.org/packages/3c/56/3f325b1eef9791759784aa5046a8f6a1aff8f7c898a2e34506771d3b99d8/jmespath-0.10.0.tar.gz"
+    sha256 "b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"
+  end
+
+  resource "prompt-toolkit" do
+    url "https://files.pythonhosted.org/packages/0c/37/7ad3bf3c6dbe96facf9927ddf066fdafa0f86766237cff32c3c7355d3b7c/prompt_toolkit-2.0.10.tar.gz"
+    sha256 "f15af68f66e664eaa559d4ac8a928111eebd5feda0c11738b5998045224829db"
+  end
+
+  resource "pycparser" do
+    url "https://files.pythonhosted.org/packages/0f/86/e19659527668d70be91d0369aeaa055b4eb396b0f387a4f92293a20035bd/pycparser-2.20.tar.gz"
+    sha256 "2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0"
+  end
+
+  resource "python-dateutil" do
+    url "https://files.pythonhosted.org/packages/4c/c4/13b4776ea2d76c115c1d1b84579f3764ee6d57204f6be27119f13a61d0a9/python-dateutil-2.8.2.tar.gz"
+    sha256 "0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"
+  end
+
+  resource "ruamel-yaml" do
+    url "https://files.pythonhosted.org/packages/9a/ee/55cd64bbff971c181e2d9e1c13aba9a27fd4cd2bee545dbe90c44427c757/ruamel.yaml-0.15.100.tar.gz"
+    sha256 "8e42f3067a59e819935a2926e247170ed93c8f0b2ab64526f888e026854db2e4"
+  end
+
+  resource "s3transfer" do
+    url "https://files.pythonhosted.org/packages/27/90/f467e516a845cf378d85f0a51913c642e31e2570eb64b352c4dc4c6cbfc7/s3transfer-0.4.2.tar.gz"
+    sha256 "cb022f4b16551edebbb31a377d3f09600dbada7363d8c5db7976e7f47732e1b2"
+  end
+
+  resource "urllib3" do
+    url "https://files.pythonhosted.org/packages/80/be/3ee43b6c5757cabea19e75b8f46eaf05a2f5144107d7db48c7cf3a864f73/urllib3-1.26.7.tar.gz"
+    sha256 "4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece"
+  end
+
+  resource "wcwidth" do
+    url "https://files.pythonhosted.org/packages/25/9d/0acbed6e4a4be4fc99148f275488580968f44ddb5e69b8ceb53fc9df55a0/wcwidth-0.1.9.tar.gz"
+    sha256 "ee73862862a156bf77ff92b09034fc4825dd3af9cf81bc5b360668d425f3c5f1"
   end
 
   def install
+    # The `awscrt` package uses its own libcrypto.a on Linux. When building _awscrt.*.so,
+    # Homebrew's default environment causes issues, which may be due to `openssl` flags.
+    # This causes installation to fail while running `scripts/gen-ac-index` with error:
+    # ImportError: _awscrt.cpython-39-x86_64-linux-gnu.so: undefined symbol: EVP_CIPHER_CTX_init
+    # As workaround, add relative path to local libcrypto.a before openssl's so it gets picked.
+    if OS.linux?
+      ENV.prepend "CFLAGS", "-I./build/deps/install/include"
+      ENV.prepend "LDFLAGS", "-L./build/deps/install/lib"
+    end
+
+    # venv.pip_install_and_link cannot be used due to requiring the `--no-build-isolation` flag
+    # See upstream build instructions: https://github.com/aws/aws-cli/blob/2.2.44/requirements-runtime.txt
+    # This should be able to be reversed in future: https://github.com/Homebrew/homebrew-core/pull/86527#issuecomment-936763994
     venv = virtualenv_create(libexec, "python3")
-    system libexec/"bin/pip", "install", "-v", "-r", "requirements.txt",
-                              "--ignore-installed", buildpath
-    system libexec/"bin/pip", "uninstall", "-y", "awscli"
-    venv.pip_install_and_link buildpath
-    system libexec/"bin/pip", "uninstall", "-y", "pyinstaller"
+    venv.pip_install resources
+
+    system libexec/"bin/pip", "install", "-v", "--no-deps",
+                              "--no-binary", ":all:",
+                              "--ignore-installed",
+                              "--no-build-isolation",
+                              buildpath
+
+    bin.install_symlink Dir[libexec/"bin/aws*"]
+
     pkgshare.install "awscli/examples"
 
     rm Dir["#{bin}/{aws.cmd,aws_bash_completer,aws_zsh_completer.sh}"]
@@ -44,8 +155,6 @@ class Awscli < Formula
         if [[ -f $e ]]; then source $e; fi
       }
     EOS
-
-    system libexec/"bin/python3", "scripts/gen-ac-index", "--include-builtin-index"
   end
 
   def caveats

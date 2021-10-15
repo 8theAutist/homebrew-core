@@ -2,10 +2,9 @@ class Erlang < Formula
   desc "Programming language for highly scalable real-time systems"
   homepage "https://www.erlang.org/"
   # Download tarball from GitHub; it is served faster than the official tarball.
-  url "https://github.com/erlang/otp/archive/OTP-23.3.2.tar.gz"
-  sha256 "02443dd42023d0eb73f73dc05f4d3ded7bc4ab59d348041a37a045ba1581b48b"
+  url "https://github.com/erlang/otp/releases/download/OTP-24.1.2/otp_src_24.1.2.tar.gz"
+  sha256 "afc227a258ac061474cdffb001b3b03e77d39d5b91c56d9f589f451b9f17a3c5"
   license "Apache-2.0"
-  head "https://github.com/erlang/otp.git"
 
   livecheck do
     url :stable
@@ -13,24 +12,28 @@ class Erlang < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "685b6113c3851edc9798179927836a60d0d3c6cd4b15f60a4e0eb591c708332d"
-    sha256 cellar: :any, big_sur:       "d6afac2250d3ca3090d417e48815c4dd1a2498c34a7c362577f1c809a88c2dae"
-    sha256 cellar: :any, catalina:      "fcb0e53b00a8b90ab2a4d32cb3afd17187e2e0a36af7ca9eead1d84cdb77e753"
-    sha256 cellar: :any, mojave:        "15f44cde591aa100f2097114b7f7dd8a08c7ba94d1fac5c7f20fa23f8b743838"
+    sha256 cellar: :any,                 arm64_big_sur: "35ee937da1a3bcb38d6ab1781ea15649e62d42011eae03874125f6e33992f75b"
+    sha256 cellar: :any,                 big_sur:       "e22bcb4943bb485924d5f18fc4025b7b67f441772226040b79724232837e2296"
+    sha256 cellar: :any,                 catalina:      "72b0db6660854bc759d896254d2ef3279d978760a072a82d85f871bafa3914b3"
+    sha256 cellar: :any,                 mojave:        "16b6c4bfc2f1f6f674420a56263d548c35b9a7553e1f81113dc250ab59e86126"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "94a39828395d45190658f9b280269d928c2dcf711d75c64542ca45d027b337b7"
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
-  depends_on "openssl@1.1"
-  depends_on "wxmac" # for GUI apps like observer
+  head do
+    url "https://github.com/erlang/otp.git"
 
-  uses_from_macos "m4" => :build
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+  end
+
+  depends_on "openssl@1.1"
+  depends_on "wxwidgets" # for GUI apps like observer
 
   resource "html" do
-    url "https://www.erlang.org/download/otp_doc_html_23.3.tar.gz"
-    mirror "https://fossies.org/linux/misc/otp_doc_html_23.3.tar.gz"
-    sha256 "03d86ac3e71bb58e27d01743a9668c7a1265b573541d4111590f0f3ec334383e"
+    url "https://github.com/erlang/otp/releases/download/OTP-24.1.2/otp_doc_html_24.1.2.tar.gz"
+    mirror "https://fossies.org/linux/misc/otp_doc_html_24.1.2.tar.gz"
+    sha256 "6e3ba1672a6c70f0a9c3920d8b1f217bd113bd6039344b2d774c52a4d1c80fb4"
   end
 
   def install
@@ -39,7 +42,7 @@ class Erlang < Formula
     %w[LIBS FLAGS AFLAGS ZFLAGS].each { |k| ENV.delete("ERL_#{k}") }
 
     # Do this if building from a checkout to generate configure
-    system "./otp_build", "autoconf" if File.exist? "otp_build"
+    system "./otp_build", "autoconf" unless File.exist? "configure"
 
     args = %W[
       --disable-debug
@@ -47,7 +50,6 @@ class Erlang < Formula
       --prefix=#{prefix}
       --enable-dynamic-ssl-lib
       --enable-hipe
-      --enable-sctp
       --enable-shared-zlib
       --enable-smp-support
       --enable-threads
@@ -56,7 +58,7 @@ class Erlang < Formula
       --without-javac
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--enable-darwin-64bit"
       args << "--enable-kernel-poll" if MacOS.version > :el_capitan
       args << "--with-dynamic-trace=dtrace" if MacOS::CLT.installed?

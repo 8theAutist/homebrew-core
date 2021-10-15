@@ -1,16 +1,17 @@
 class Stgit < Formula
   desc "Manage Git commits as a stack of patches"
   homepage "https://stacked-git.github.io"
-  url "https://github.com/stacked-git/stgit/releases/download/v1.0/stgit-1.0.tar.gz"
-  sha256 "c2a26b2e6a8fe2eb9c8aa4ade6d6dd35858137c381448b6142c4d2c142b47b94"
-  license "GPL-2.0"
-  head "https://github.com/stacked-git/stgit.git"
+  url "https://github.com/stacked-git/stgit/releases/download/v1.3/stgit-1.3.tar.gz"
+  sha256 "44819a9809dba10ee9664f59f43fd40e5a338c99cb1181667b0a1e6428157e2b"
+  license "GPL-2.0-only"
+  head "https://github.com/stacked-git/stgit.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c5a53278cd1f922a7f28291f9042ba639213ecbed89cb9359559909e3ef52256"
-    sha256 cellar: :any_skip_relocation, big_sur:       "0d1c580a5b1f6c8e0019bcad1455dc7cc80dc7cf7652ecbaf8830553f5576a6e"
-    sha256 cellar: :any_skip_relocation, catalina:      "c053e3cf370231d34d8f86d4976187abaf7d85005581d385aef03c6a63915257"
-    sha256 cellar: :any_skip_relocation, mojave:        "655ab25a88fe3f0810affa25bee1f0e7cd7f0f96866952fa40156780f165a22b"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "e3bdca3fa2b8dfd10dd3e89dd08aa7c5760d7fb9159c1abecbb56b53c9241731"
+    sha256 cellar: :any_skip_relocation, big_sur:       "ae08af52ebd73ea02f596294454b6bda5c9efc360e2b03c9806d0f508f4a5282"
+    sha256 cellar: :any_skip_relocation, catalina:      "ae08af52ebd73ea02f596294454b6bda5c9efc360e2b03c9806d0f508f4a5282"
+    sha256 cellar: :any_skip_relocation, mojave:        "ae08af52ebd73ea02f596294454b6bda5c9efc360e2b03c9806d0f508f4a5282"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e3bdca3fa2b8dfd10dd3e89dd08aa7c5760d7fb9159c1abecbb56b53c9241731"
   end
 
   depends_on "asciidoc" => :build

@@ -4,6 +4,7 @@ class OpenMpi < Formula
   url "https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.1.tar.bz2"
   sha256 "e24f7a778bd11a71ad0c14587a7f5b00e68a71aa5623e2157bafee3d44c07cda"
   license "BSD-3-Clause"
+  revision 2
 
   livecheck do
     url :homepage
@@ -11,10 +12,11 @@ class OpenMpi < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "25d0e0b937bfcbaf91f69da6d56bda31aab1cb9df339221185852f3382bf8b9a"
-    sha256 big_sur:       "005a39311bb1bd8ab0b23706713897816547c6a6e25a2175ad7aad5f94948b4c"
-    sha256 catalina:      "a2a4edb115a7250b8ad9de6642607e97e30a949d073fa39073e483c7723cdc68"
-    sha256 mojave:        "01111108516c36da32dbbdc93e65386c7567ef977f437a001a3fd8c1a3e9d3a4"
+    sha256 arm64_big_sur: "c24af00250fad2b097822d0d6e51f1027915e375dcbc0590b385b30ef8af6453"
+    sha256 big_sur:       "da310195e62c1a27aea7365b325cb15dd48f99dd673fd1f685f8b5247cfbb48d"
+    sha256 catalina:      "27f25156376078df9cb6e41a57c370cb030f16092ee7dfe85d7a8000f252240e"
+    sha256 mojave:        "4d57102ec2e06043bc97d34130ae5cd9115a6a1718331476f5fbd71d8bef149e"
+    sha256 x86_64_linux:  "0c6558437eedbf31810f41163ddff64c610ec5d5065bb4080e2559961ab3668d"
   end
 
   head do
@@ -24,7 +26,7 @@ class OpenMpi < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "gcc"
+  depends_on "gcc" # for gfortran
   depends_on "hwloc"
   depends_on "libevent"
 
@@ -64,7 +66,7 @@ class OpenMpi < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --enable-ipv6
-      --enable-mca-no-build=op-avx,reachable-netlink
+      --enable-mca-no-build=reachable-netlink
       --with-libevent=#{Formula["libevent"].opt_prefix}
       --with-sge
     ]

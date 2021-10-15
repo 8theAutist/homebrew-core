@@ -1,21 +1,28 @@
 class Kdoctools < Formula
   desc "Create documentation from DocBook"
   homepage "https://api.kde.org/frameworks/kdoctools/html/index.html"
-  url "https://download.kde.org/stable/frameworks/5.80/kdoctools-5.80.0.tar.xz"
-  sha256 "1eae100e641206ef01275d3577c286f73523a516854fe146121ceb302fc0ac83"
+  url "https://download.kde.org/stable/frameworks/5.87/kdoctools-5.87.0.tar.xz"
+  sha256 "fa0e84b1298f2d85ac31cf3fdc4282b463f43a68483795de3098ec5a76e4a555"
   license all_of: [
     "BSD-3-Clause",
     "GPL-2.0-or-later",
     "LGPL-2.1-or-later",
     any_of: ["LGPL-2.1-only", "LGPL-3.0-only"],
   ]
-  head "https://invent.kde.org/frameworks/kdoctools.git"
+  head "https://invent.kde.org/frameworks/kdoctools.git", branch: "master"
+
+  # We check the tags from the `head` repository because the latest stable
+  # version doesn't seem to be easily available elsewhere.
+  livecheck do
+    url :head
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   bottle do
-    sha256 arm64_big_sur: "0ae15708d6dc13c5c6dcdf69700c29b09734205119444f396a3fa77c7a0b7ce4"
-    sha256 big_sur:       "d42665a9b006c821f8e71f39c48fc25d9563167bebdd6902884e4df2d64464fb"
-    sha256 catalina:      "12a1b64864af6bfdaed18c7157d1a2fbd9dcd5f59ffd70ce7df2be0b4c1a8202"
-    sha256 mojave:        "05aad2aff1561a4a73a2e9f7060e4f00035dfa59ae1f880c6ab9bc9542fa29d5"
+    sha256 cellar: :any, arm64_big_sur: "2e0bad1e56a05716e01d4f070db0eac7c353baec09b19eae0202a1cb3636828b"
+    sha256 cellar: :any, big_sur:       "d47f45648e01a2e69663c04884505e4a18a87addd1999a0db41e414fc4275c77"
+    sha256 cellar: :any, catalina:      "8e4002f40f37ac21cafcabb0d66e3d79c40a5722abe75af77d3e9d7eb10b168e"
+    sha256 cellar: :any, mojave:        "04928cce0d657950adf81276bf40409a5ae4dea20cb8aff2f81f46b8d69e05e6"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -49,10 +56,9 @@ class Kdoctools < Formula
     args << "-DBUILD_TESTING=OFF"
     args << "-DBUILD_QCH=ON"
 
-    mkdir "build" do
-      system "cmake", "..", *args
-      system "make", "install"
-    end
+    system "cmake", "-S", ".", "-B", "build", *args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     pkgshare.install ["cmake", "autotests", "tests"]
   end

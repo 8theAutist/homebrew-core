@@ -2,8 +2,8 @@ class Dotnet < Formula
   desc ".NET Core"
   homepage "https://dotnet.microsoft.com/"
   url "https://github.com/dotnet/source-build.git",
-      tag:      "v5.0.104-SDK",
-      revision: "269e323b5f2e2df4678c7763282c14fb1a530cfa"
+      tag:      "v5.0.207-SDK",
+      revision: "52296950a9e8d1b34a2e0e10e4b8bb06daba2dcc"
   license "MIT"
 
   livecheck do
@@ -12,27 +12,33 @@ class Dotnet < Formula
   end
 
   bottle do
-    sha256 cellar: :any, big_sur:  "ec13dc6a956f92de6cde591c575c2df601cfefab99827a3d5ae3a89358c40224"
-    sha256 cellar: :any, catalina: "4402b3291b0ef7eb32c234d13d30e3bb03d84df76dc5d7bbce504712c554fd2a"
-    sha256 cellar: :any, mojave:   "a6db75bc17964a0edeca4ec3913ce871641a80c1d170bf4096fa5f7726ec1a5f"
+    sha256 cellar: :any,                 big_sur:      "dd058f1a46a84ee8cfbdf5450a5248ca1b5af91ae018efd5f96b0b760a4cc84f"
+    sha256 cellar: :any,                 catalina:     "a9c2b8e900351d1cb074100a60de404f033436032c1116c6094351446253e777"
+    sha256 cellar: :any,                 mojave:       "b7a7a743c0b409569cc5f139ada574e0b32f331b2950252a5afb2809123514d7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "dd46b0305e565a6a6da6768a2d8d15a4e080cae9b9f29c4e9595067ed068d8c9"
   end
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
   depends_on xcode: :build
+  depends_on arch: :x86_64
   depends_on "curl"
   depends_on "icu4c"
   depends_on "openssl@1.1"
 
-  # libicu 68 deprecates its defined boolean constants for TRUE/FALSE
-  # https://github.com/dotnet/runtime/issues/47346
-  resource "runtime-libicu-68-patch" do
-    url "https://raw.githubusercontent.com/archlinux/svntogit-community/ac84e64334a020b62551896bf54a87c49baa2b8e/trunk/9999-runtime-libicu-68.patch"
-    sha256 "f3ce241390dd396ba641d842f43c89ead63c53f0db95776e2c9df1786bf7c296"
+  uses_from_macos "krb5"
+  uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "llvm" => [:build, :test]
+    depends_on "libunwind"
+    depends_on "lttng-ust"
   end
 
+  fails_with :gcc
+
   def install
-    (buildpath/"patches/runtime").install resource("runtime-libicu-68-patch")
+    ENV.append_path "LD_LIBRARY_PATH", Formula["icu4c"].opt_lib if OS.linux?
 
     # Arguments needed to not artificially time-limit downloads from Azure.
     # See the following GitHub issue comment for details:

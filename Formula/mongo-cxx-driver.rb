@@ -1,16 +1,17 @@
 class MongoCxxDriver < Formula
   desc "C++ driver for MongoDB"
   homepage "https://github.com/mongodb/mongo-cxx-driver"
-  url "https://github.com/mongodb/mongo-cxx-driver/archive/r3.6.3.tar.gz"
-  sha256 "bdf6033ed23df0cdd8c6e1e45cf6dfa63c9806893718eadfa6574cb25b3183a8"
+  url "https://github.com/mongodb/mongo-cxx-driver/archive/r3.6.6.tar.gz"
+  sha256 "f989c371800458ae45ef69f6d9566e010f9420435a01bf5eb14db77fc024662e"
   license "Apache-2.0"
   head "https://github.com/mongodb/mongo-cxx-driver.git"
 
   bottle do
-    sha256               arm64_big_sur: "f4eec5a80c592004a9c7fa39dbac3f271af4af0d834027c10df6b9df4f14c553"
-    sha256 cellar: :any, big_sur:       "bee19ded548d6ac9188e81937de9f8bea55cf7891f4acc212b719831af78697e"
-    sha256 cellar: :any, catalina:      "26a08f03803c3e8e609d9b401f0d8cbac566a1386737088cb9bbcca3e1974523"
-    sha256 cellar: :any, mojave:        "61cc88f607a5ff2cbd96f49df8b81f9f766eb76baff24ace975dc001ae605306"
+    sha256 cellar: :any,                 arm64_big_sur: "39739b35a1ea90cbbd5d43e9623adfe38088ef5a19e82d2525e92f6128018923"
+    sha256 cellar: :any,                 big_sur:       "4a4b43266285d03ebc8a084a5c210c97ba845b8fd333eac87f4c395267a6967f"
+    sha256 cellar: :any,                 catalina:      "3376ae78c833751b52cce134f6bd1cfa48e13bc267abf9cb09402b8ccef5dda7"
+    sha256 cellar: :any,                 mojave:        "9936b280f4bdeffa5f2a50c07e860ca2025ac559b2e33e535e3077f97568576b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1bfa9bffbeeea55731cd27d71a64aa9da8e9c9f85e2b54946ff62257f5c55435"
   end
 
   depends_on "cmake" => :build
@@ -27,7 +28,7 @@ class MongoCxxDriver < Formula
                         "-DBUILD_VERSION=#{version}",
                         "-DLIBBSON_DIR=#{mongo_c_prefix}",
                         "-DLIBMONGOC_DIR=#{mongo_c_prefix}",
-                        "-DCMAKE_INSTALL_RPATH=#{lib}"
+                        "-DCMAKE_INSTALL_RPATH=#{rpath}"
     system "make"
     system "make", "install"
   end

@@ -2,22 +2,23 @@ class Php < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-8.0.3.tar.xz"
-  mirror "https://fossies.org/linux/www/php-8.0.3.tar.xz"
-  sha256 "c9816aa9745a9695672951eaff3a35ca5eddcb9cacf87a4f04b9fb1169010251"
+  url "https://www.php.net/distributions/php-8.0.11.tar.xz"
+  mirror "https://fossies.org/linux/www/php-8.0.11.tar.xz"
+  sha256 "e3e5f764ae57b31eb65244a45512f0b22d7bef05f2052b23989c053901552e16"
   license "PHP-3.01"
   revision 1
 
   livecheck do
-    url "https://www.php.net/releases/feed.php"
-    regex(/PHP (\d+(?:\.\d+)+) /i)
+    url "https://www.php.net/downloads"
+    regex(/href=.*?php[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
-    sha256 arm64_big_sur: "4f8a860f38f3716ada5731cf61b83aaee37fd4b77c573d6f4f9ac3bb372b0d59"
-    sha256 big_sur:       "4b2596b7c8e0fea52fef4426a5c41f295203893ac78d0dda6c805d20f17fc4df"
-    sha256 catalina:      "053a0f4b057077525cb0c20e3a6eae9c5f7fdb0b31b907be4beb3bbc580f65b8"
-    sha256 mojave:        "5ff80fa0d79fff9619296e5994bd12113503eaa3da786076e64e0c3976484228"
+    sha256 arm64_big_sur: "4f81a4eab7f4515e4cbcf4113f757fb139a01c4f22f3315c78bb5edf91e2b7ff"
+    sha256 big_sur:       "4c2b00435fcfe889337bbf6e28f828efcd41d53649cfe8a86e0c1f86aa0ac317"
+    sha256 catalina:      "9e433c477eab0730bf927cd8f4fed84a1d03d08ae115ffd5fa9c1c37b6b60231"
+    sha256 mojave:        "56d9bcf717d3f58c9485b04a0cd5041feed8674ea8643b3f81409e23127b6ba9"
+    sha256 x86_64_linux:  "95dc94bc95cbb355428242066700660668d4ca313ae88bd2a893edddc4a6d494"
   end
 
   head do
@@ -68,9 +69,9 @@ class Php < Formula
   end
 
   def install
-    on_macos do
+    if OS.mac? && (MacOS.version == :el_capitan || MacOS.version == :sierra)
       # Ensure that libxml2 will be detected correctly in older MacOS
-      ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :el_capitan || MacOS.version == :sierra
+      ENV["SDKROOT"] = MacOS.sdk_path
     end
 
     # buildconf required due to system library linking bug patch
@@ -107,11 +108,10 @@ class Php < Formula
 
     # system pkg-config missing
     ENV["KERBEROS_CFLAGS"] = " "
-    on_macos do
+    if OS.mac?
       ENV["SASL_CFLAGS"] = "-I#{MacOS.sdk_path_if_needed}/usr/include/sasl"
       ENV["SASL_LIBS"] = "-lsasl2"
-    end
-    on_linux do
+    else
       ENV["SQLITE_CFLAGS"] = "-I#{Formula["sqlite"].opt_include}"
       ENV["SQLITE_LIBS"] = "-lsqlite3"
       ENV["BZIP_DIR"] = Formula["bzip2"].opt_prefix
@@ -119,10 +119,7 @@ class Php < Formula
 
     # Each extension that is built on Mojave needs a direct reference to the
     # sdk path or it won't find the headers
-    headers_path = ""
-    on_macos do
-      headers_path = "=#{MacOS.sdk_path_if_needed}/usr"
-    end
+    headers_path = "=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?
 
     args = %W[
       --prefix=#{prefix}
@@ -192,12 +189,11 @@ class Php < Formula
       --with-zlib
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--enable-dtrace"
       args << "--with-ldap-sasl"
       args << "--with-os-sdkpath=#{MacOS.sdk_path_if_needed}"
-    end
-    on_linux do
+    else
       args << "--disable-dtrace"
       args << "--without-ldap-sasl"
       args << "--without-ndbm"

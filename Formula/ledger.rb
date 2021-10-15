@@ -4,7 +4,7 @@ class Ledger < Formula
   url "https://github.com/ledger/ledger/archive/v3.2.1.tar.gz"
   sha256 "92bf09bc385b171987f456fe3ee9fa998ed5e40b97b3acdd562b663aa364384a"
   license "BSD-3-Clause"
-  revision 4
+  revision 7
   head "https://github.com/ledger/ledger.git"
 
   livecheck do
@@ -13,23 +13,32 @@ class Ledger < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "2606457bb4b8596b5502ce4a4f1e61d62e71fa29118987ff14eb6b7d26d81368"
-    sha256 big_sur:       "b65a9b4ec2be3cc44503122ec6dcb41d1101fa3425a64b197b08743fe3aaad84"
-    sha256 catalina:      "be65eaa4610eb98628f7c3abaf5582dd0ab145a991275e2550e48cebc313a012"
-    sha256 mojave:        "47990a19ee10042ffb198cb105cb9c56a11a3d8db606166f57a57c9a9c89620a"
+    sha256 cellar: :any,                 arm64_big_sur: "f80c6502c9966f8c6c0fdaa04257abe0ec381ac1e71d5c8c7fa040b5f17bf7eb"
+    sha256 cellar: :any,                 big_sur:       "43b45dca311aaac9d9beaa116d7460a9c8ae1018e196e627811f34b0a33b4e33"
+    sha256 cellar: :any,                 catalina:      "339bea75fa51d131603613fb31e95c0b0774cc00e30a7accbcf0560bf8d8f900"
+    sha256 cellar: :any,                 mojave:        "7a030e18924a202197ca72c04fd9f147930e021b428581c7e111dd00acb0dd2d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4e62b1de7a6c8f43ba22517035871c6c47010d52f007e63292f89116b5d8cdc6"
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
   depends_on "gmp"
   depends_on "mpfr"
-  depends_on "python@3.9"
+  depends_on "python@3.10"
 
   uses_from_macos "groff"
 
+  # Compatibility with Boost 1.76
+  # https://github.com/ledger/ledger/issues/2030
+  # https://github.com/ledger/ledger/pull/2036
+  patch do
+    url "https://github.com/ledger/ledger/commit/e60717ccd78077fe4635315cb2657d1a7f539fca.patch?full_index=1"
+    sha256 "edba1dd7bde707f510450db3197922a77102d5361ed7a5283eb546fbf2221495"
+  end
+
   def install
     ENV.cxx11
-    ENV.prepend_path "PATH", Formula["python@3.9"].opt_libexec/"bin"
+    ENV.prepend_path "PATH", Formula["python@3.10"].opt_libexec/"bin"
 
     args = %W[
       --jobs=#{ENV.make_jobs}

@@ -1,16 +1,17 @@
 class Flint < Formula
   desc "C library for number theory"
   homepage "https://flintlib.org"
-  url "https://flintlib.org/flint-2.7.1.tar.gz"
-  sha256 "186e2fd9ab67df8a05b122fb018269b382e4babcdb17353c4be1fe364dca481e"
+  url "https://flintlib.org/flint-2.8.1.tar.gz"
+  sha256 "edfdda7a7cb847db4e55e050349259cbc9778589686007fb45602d36ecfb427e"
   license "LGPL-2.1-or-later"
   head "https://github.com/wbhart/flint2.git", branch: "trunk"
 
   bottle do
-    sha256 arm64_big_sur: "68bd7a3053ac5e8363ca0128fea147a9866ae9d6af31a0b2876cb29f9f5b96a3"
-    sha256 big_sur:       "c49c7f2e195411a78c7e6d0b29dc2b532be8f501158d53b0c5f32bf270e20794"
-    sha256 catalina:      "09ed48e46ae65d153f1c0014dac7b83436280a7a236bd305b8e82c86762d7777"
-    sha256 mojave:        "f41f76595678bd2f16dc46ceeb1524c089b931f9f65fe6c826272ce703d36283"
+    sha256 cellar: :any,                 arm64_big_sur: "6f2981ec689748e03ff3f2392d9265ebfafbec6b9112d286bc01d2c96bf4bee0"
+    sha256 cellar: :any,                 big_sur:       "52bb668d0ca7fdcadb42dc9ac7450a959f4a59be028796f46ce868f7fd6d16e3"
+    sha256 cellar: :any,                 catalina:      "90c565d4e6251aed5a7a4f91475f74a59bfc0f2fd2f3a1b83b9442d42fa4cba2"
+    sha256 cellar: :any,                 mojave:        "f1159c2c6288bca9383822507074eb253dd66ac52edfbe89efa0b96d1614f1bf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8339963b09affa0fa22b884698a72b8e25ea556ccf063d0be32b1652a3dbad2f"
   end
 
   depends_on "gmp"

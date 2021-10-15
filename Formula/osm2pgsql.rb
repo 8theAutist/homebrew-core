@@ -1,15 +1,18 @@
 class Osm2pgsql < Formula
   desc "OpenStreetMap data to PostgreSQL converter"
   homepage "https://osm2pgsql.org"
-  url "https://github.com/openstreetmap/osm2pgsql/archive/1.4.2.tar.gz"
-  sha256 "fc68283930ccd468ed9b28685150741b16083fec86800a4b011884ae22eb061c"
+  url "https://github.com/openstreetmap/osm2pgsql/archive/1.5.1.tar.gz"
+  sha256 "4df0d332e5d77a9d363f2f06f199da0ac23a0dc7890b3472ea1b5123ac363f6e"
   license "GPL-2.0-only"
-  head "https://github.com/openstreetmap/osm2pgsql.git"
+  head "https://github.com/openstreetmap/osm2pgsql.git", branch: "master"
 
   bottle do
-    sha256 big_sur:  "3f530e403705b21a4a3fcd1b88ba86e960fa59fe68927dc97d444a4c44a84c68"
-    sha256 catalina: "c1b0f77d4750d1d9869d6a7e825d3eb5299df7f4f97a9ca9a2d527535cc91022"
-    sha256 mojave:   "0f90e7f8b56644c4d3c764a4b8c2d6b69ed5be0b58cb183e6d5ebcd51c662069"
+    rebuild 1
+    sha256 arm64_big_sur: "38b8d470e385856ca0a5aeb452c0c5f7714495b9b50bd241a12a3dbf60f8f07c"
+    sha256 big_sur:       "e4d3b73be00cfafd57ef0ba98121a8ffe544aae106c3fe91dfe33195e69a2daa"
+    sha256 catalina:      "1d25fa90f24352efd87936ea0e25a33a55204949e3b360e8eecf5398d5765069"
+    sha256 mojave:        "031cfa9cdda3eb6e2273b0c682058e5d3acddfd197a32aa60967540a3244b6cc"
+    sha256 x86_64_linux:  "95bbcae74853dd3375a2984d6d7ca871e58bac5ebac029d844ac5bb0e6f55b56"
   end
 
   depends_on "cmake" => :build
@@ -18,7 +21,7 @@ class Osm2pgsql < Formula
   depends_on "geos"
   depends_on "luajit-openresty"
   depends_on "postgresql"
-  depends_on "proj"
+  depends_on "proj@7"
 
   def install
     # This is essentially a CMake disrespects superenv problem
@@ -39,7 +42,7 @@ class Osm2pgsql < Formula
   end
 
   test do
-    assert_match "Connecting to database failed: could not connect to server",
+    assert_match "Connecting to database failed: connection to server",
                  shell_output("#{bin}/osm2pgsql /dev/null 2>&1", 1)
   end
 end

@@ -1,20 +1,23 @@
 class Bpytop < Formula
   include Language::Python::Virtualenv
+  include Language::Python::Shebang
 
   desc "Linux/OSX/FreeBSD resource monitor"
   homepage "https://github.com/aristocratos/bpytop"
-  url "https://files.pythonhosted.org/packages/c1/fe/25709a8103a6e2d0fc7dc79d919f541156c2c1a758ed5231965c3433588d/bpytop-1.0.64.tar.gz"
-  sha256 "758fa894d6147bbdaba51b7bd1c5bf878b7f742c59ac10c1bfac5c974e2ca20a"
+  url "https://github.com/aristocratos/bpytop/archive/v1.0.67.tar.gz"
+  sha256 "e3f0267bd40a58016b5ac81ed6424f1c8d953b33a537546b22dd1a2b01b07a97"
   license "Apache-2.0"
+  revision 2
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a948efb8575563dfa4e58feab665989003e043602c32c780647c3ee0b1405c6c"
-    sha256 cellar: :any_skip_relocation, big_sur:       "4734b7a4876f2ce8fcab0e7e4dde25e55c574cb5054dc5b8094e499ae20e5deb"
-    sha256 cellar: :any_skip_relocation, catalina:      "af52fe4d6d3ff458572a9fd39507e33ad0bad4f1fb15a6d6eb06f3e6b4965d0a"
-    sha256 cellar: :any_skip_relocation, mojave:        "d0a896d093dd71505646544947c5b1b9160556764a407ea2f9fc7bee9f133192"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "9d29bed4df3651ba795552146d0082d3e7ed6f0e08ff913bd25a40d0666367fa"
+    sha256 cellar: :any_skip_relocation, big_sur:       "a9124b39222c6cad1fc9f9d55c193f1ba34e26611cb1d9cb82b01834e6008643"
+    sha256 cellar: :any_skip_relocation, catalina:      "6c53a6e4e1beffda773d8f98c8ffe1f971d5a2edf90bf91b6f93db4491e61f26"
+    sha256 cellar: :any_skip_relocation, mojave:        "ba84fab69b931ddb11536521357b40c669ddc1d562d414cb524bcd11251c6fc3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "87ef5047c7a8082a5fe12a5aaf24d410fd9eb8e7bd1c01aa807cbf488d86a4cf"
   end
 
-  depends_on "python@3.9"
+  depends_on "python@3.10"
   on_macos do
     depends_on "osx-cpu-temp"
   end
@@ -25,8 +28,14 @@ class Bpytop < Formula
   end
 
   def install
-    virtualenv_install_with_resources
-    pkgshare.install "bpytop-themes" => "themes"
+    venv = virtualenv_create(libexec, "python3")
+    venv.pip_install resources
+    system "make", "install", "PREFIX=#{prefix}"
+    pkgshare.install "themes"
+
+    # Replace shebang with virtualenv python
+    rw_info = python_shebang_rewrite_info("#{libexec}/bin/python")
+    rewrite_shebang rw_info, bin/"bpytop"
   end
 
   test do

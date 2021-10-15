@@ -1,27 +1,45 @@
 class Clusterctl < Formula
   desc "Home for the Cluster Management API work, a subproject of sig-cluster-lifecycle"
   homepage "https://cluster-api.sigs.k8s.io"
-  url "https://github.com/kubernetes-sigs/cluster-api/archive/refs/tags/v0.3.16.tar.gz"
-  sha256 "38924e4d386cf61e3761ccc5e0738bdc8b355c6281f81fc972b15c640a0a61ed"
+  url "https://github.com/kubernetes-sigs/cluster-api.git",
+      tag:      "v1.0.0",
+      revision: "e09ed61cc9ba8bd37b0760291c833b4da744a985"
   license "Apache-2.0"
+  head "https://github.com/kubernetes-sigs/cluster-api.git", branch: "master"
 
+  # Upstream creates releases on GitHub for the two most recent major/minor
+  # versions (e.g., 0.3.x, 0.4.x), so the "latest" release can be incorrect. We
+  # don't check the Git tags because, for this project, a version may not be
+  # considered released until the GitHub release is created. The first-party
+  # website doesn't clearly list the latest version and we have to isolate it
+  # from a GitHub URL used in a curl command in the installation instructions.
   livecheck do
-    url :stable
-    strategy :github_latest
+    url "https://cluster-api.sigs.k8s.io/user/quick-start.html"
+    regex(%r{/cluster-api/releases/download/v?(\d+(?:\.\d+)+)/}i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c9d431c82b44e2fbffd942cd109122c26647596bf1308f016ab91c1364af3313"
-    sha256 cellar: :any_skip_relocation, big_sur:       "394bcb29c3a32b3c6f9ab6d2b307970f099ea6eab792c5f5238dad05be986b06"
-    sha256 cellar: :any_skip_relocation, catalina:      "ffb6b062b6d1199b54de0f08ec2109f30994819b1ebf627f571e91b07ccdd816"
-    sha256 cellar: :any_skip_relocation, mojave:        "bd04ca87ea4fbcb7a6d96ae0525701f9ce858775bc7c82cce063cbea50fd9e8d"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "cf44da229fbd2190227c32fc830a13fbfd4c2ab218b3e404f058224a13332aea"
+    sha256 cellar: :any_skip_relocation, big_sur:       "34607708549a05bff8c4144f2a1fd91cc0f6461322b2c299942e6b25a09ad456"
+    sha256 cellar: :any_skip_relocation, catalina:      "25e082158e2f7ec8f5c248e4e409ff9c78e79f1753ce0ee9f30b698e638b5aa4"
+    sha256 cellar: :any_skip_relocation, mojave:        "4d6a2d3e93b26cc928599c3c906a1c9418672e42d2199b12c8cb587662b603f4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "096e35d1cc0e3180a4837badada836925041a5d7d2b731d86a04ae7c96618fb4"
   end
 
   depends_on "go" => :build
 
   def install
+    # Don't dirty the git tree
+    rm_rf ".brew_home"
+
     system "make", "clusterctl"
     prefix.install "bin"
+
+    bash_output = Utils.safe_popen_read(bin/"clusterctl", "completion", "bash")
+    (bash_completion/"clusterctl").write bash_output
+
+    zsh_output = Utils.safe_popen_read(bin/"clusterctl", "completion", "zsh")
+    (zsh_completion/"_clusterctl").write zsh_output
   end
 
   test do

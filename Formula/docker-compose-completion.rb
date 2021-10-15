@@ -1,22 +1,18 @@
 class DockerComposeCompletion < Formula
   desc "Completion script for docker-compose"
   homepage "https://docs.docker.com/compose/completion/"
-  url "https://github.com/docker/compose/archive/1.29.0.tar.gz"
-  sha256 "a798ec994096654d0e50b408fdb55015ce3e520b31e1819797edc425e9413388"
+  url "https://github.com/docker/compose/archive/1.29.2.tar.gz"
+  sha256 "99a9b91d476062d280c889ae4e9993d7dd6a186327bafb2bb39521f9351b96eb"
   license "Apache-2.0"
   head "https://github.com/docker/compose.git"
 
-  livecheck do
-    url :stable
-    strategy :github_latest
-  end
-
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "8f57c6232f871ff40bfba037af9870b8da96a43d17c5796d27722df2c5efdb1c"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "daddf263b55ef91e97b0fe1eadb0887bce2c3dda6eabce27a30f775dccedf43b"
   end
 
-  conflicts_with "docker-compose",
-    because: "docker-compose already includes completion scripts"
+  # See: https://github.com/docker/compose/issues/8550
+  deprecate! date: "2021-10-02", because: "no upstream support for v2"
 
   def install
     bash_completion.install "contrib/completion/bash/docker-compose"

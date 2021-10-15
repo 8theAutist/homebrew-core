@@ -1,15 +1,15 @@
 class Lmod < Formula
   desc "Lua-based environment modules system to modify PATH variable"
   homepage "https://lmod.readthedocs.io"
-  url "https://github.com/TACC/Lmod/archive/8.4.31.tar.gz"
-  sha256 "3e3aa98e3c29a0e775aecde57a677a580975e550e2883255e9861a985f2dfd89"
+  url "https://github.com/TACC/Lmod/archive/8.5.18.tar.gz"
+  sha256 "54afd4f23348a2e0ce4b46c0cf491cf9ca7246783231a19bb9a79ead1864a02e"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "68bcb167d5356a5cba54bff7be12887a3747b334b8d528bcad34c883681f892a"
-    sha256 cellar: :any_skip_relocation, big_sur:       "bc471548c41e9b6c0f4547f62d572ddc1efe9b08208f4fce87c128d06d2ea997"
-    sha256 cellar: :any_skip_relocation, catalina:      "063d0b10801d9648e1059ca70e5fcded123db8695cc19b0dbef3cea56afecb83"
-    sha256 cellar: :any_skip_relocation, mojave:        "9927afc6d75d0a06aec319f6c8a622090bb7358357412f2a8606ef4b8abd8020"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a77f38d6166ade6dfa03a53f1bce36a5fbb7bddc482bf895d43460fe67bddb11"
+    sha256 cellar: :any_skip_relocation, big_sur:       "f99196aab3dfeb3a4e4614fcf5036568dff018036f672a1b86ff9ff39ef6a9e0"
+    sha256 cellar: :any_skip_relocation, catalina:      "89686b9ab35a7591c1bf23f98a7d9f6fb28cfef9b72474bbaede505664e03c27"
+    sha256 cellar: :any_skip_relocation, mojave:        "c9a47084c858a366f5ae1fe8e1652bbbd43b35422fd6895892a28a015ed94e9d"
   end
 
   depends_on "luarocks" => :build
@@ -24,8 +24,8 @@ class Lmod < Formula
   end
 
   resource "luaposix" do
-    url "https://github.com/luaposix/luaposix/archive/v35.0.tar.gz"
-    sha256 "a4edf2f715feff65acb009e8d1689e57ec665eb79bc36a6649fae55eafd56809"
+    url "https://github.com/luaposix/luaposix/archive/refs/tags/v35.1.tar.gz"
+    sha256 "1b5c48d2abd59de0738d1fc1e6204e44979ad2a1a26e8e22a2d6215dd502c797"
   end
 
   def install

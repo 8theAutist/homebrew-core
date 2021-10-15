@@ -1,15 +1,15 @@
 class Xcodegen < Formula
   desc "Generate your Xcode project from a spec file and your folder structure"
   homepage "https://github.com/yonaskolb/XcodeGen"
-  url "https://github.com/yonaskolb/XcodeGen/archive/2.20.0.tar.gz"
-  sha256 "747d833b469bd48f7bd2f286c69efc6ee79a3921446235dc491548acfba5da20"
+  url "https://github.com/yonaskolb/XcodeGen/archive/2.25.0.tar.gz"
+  sha256 "bae6b1b59ac2c43e9efc3b789fcfb0e093fa9d0b3d1e3b654735a5cba3d0019c"
   license "MIT"
-  head "https://github.com/yonaskolb/XcodeGen.git"
+  head "https://github.com/yonaskolb/XcodeGen.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "eb61cff1fb28fbaf2a1d3052258f4dbef8647f5138aa96bd5293c7ca6e8b9222"
-    sha256 cellar: :any_skip_relocation, big_sur:       "8ea416bc2a25638a2a9341c6da1bfd8fa17ed38ced74513a2628430f0151dbee"
-    sha256 cellar: :any_skip_relocation, catalina:      "9334f33f98e242842896f388a44dadd6582491086e56261e04a083765ef86e08"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "558d80be972d11ef397faf078060b06eec90a8c0e8371202ec5691660c27c3af"
+    sha256 cellar: :any_skip_relocation, big_sur:       "88f2036496a41621c151480d5841a7f7bed90157a292e7cd48efb121a082a29b"
+    sha256 cellar: :any_skip_relocation, catalina:      "366ce43fa5f03f0fa975bb4f1433b4aa8a8ba3a745148cf4800b7e25266aa800"
   end
 
   depends_on xcode: ["10.2", :build]

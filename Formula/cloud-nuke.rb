@@ -1,31 +1,23 @@
 class CloudNuke < Formula
   desc "CLI tool to nuke (delete) cloud resources"
   homepage "https://gruntwork.io/"
-  url "https://github.com/gruntwork-io/cloud-nuke/archive/v0.1.29.tar.gz"
-  sha256 "329c672a81e08cbeb22a76c83b206261a3e0a5b3f03d58f329071e9dcef411e7"
+  url "https://github.com/gruntwork-io/cloud-nuke/archive/v0.5.1.tar.gz"
+  sha256 "65c19fafd832110cf79d0c16ef4df0a9f6628b5824e7b5c39f2bac32cd53f9b6"
   license "MIT"
-  head "https://github.com/gruntwork-io/cloud-nuke.git"
+  head "https://github.com/gruntwork-io/cloud-nuke.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b17a2693f46142381893f00f7988d4296c024a7ba4852585aa6cabfa529c6bf1"
-    sha256 cellar: :any_skip_relocation, big_sur:       "d81f003fc6993caaf897faf962124152ada062fb27c5da3b4c9e84736a087d4d"
-    sha256 cellar: :any_skip_relocation, catalina:      "f4f321b0756b3f831e79017b3336a92cd77c572d885f862f5c0213d65fc30134"
-    sha256 cellar: :any_skip_relocation, mojave:        "c86f84dda85f2952a53cde639994392bc19dff6e545eee44ebabcbc2fb100c27"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b983f77e7aa2398e4637f313c0682d13eeaa1a33ed02cff770d21b113d667de8"
+    sha256 cellar: :any_skip_relocation, big_sur:       "dbbaa05b1c52751f0d6cee69a4d1bf71e7eac92bcc77366ab62b02aded6f4c71"
+    sha256 cellar: :any_skip_relocation, catalina:      "0dc586366e3ad7a0d8c575f2e16379e32d2d7a9f74f1d00e49c0e044c5108058"
+    sha256 cellar: :any_skip_relocation, mojave:        "7db7089f7af529a14a23d70279b4d14b8e8e7883ba8b572f6c9dbb30cb8250cb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "be41c72a07ad9430f9c87f84b92bc5f70c02c63f59e6298258ece0e0cde48944"
   end
 
   depends_on "go" => :build
 
   def install
     system "go", "build", "-ldflags", "-s -w -X main.VERSION=v#{version}", *std_go_args
-  end
-
-  def caveats
-    <<~EOS
-      Before you can use these tools, you must export some variables to your $SHELL.
-        export AWS_ACCESS_KEY="<Your AWS Access ID>"
-        export AWS_SECRET_KEY="<Your AWS Secret Key>"
-        export AWS_REGION="<Your AWS Region>"
-    EOS
   end
 
   test do

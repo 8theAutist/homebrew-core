@@ -1,20 +1,27 @@
 class Ki18n < Formula
   desc "KDE Gettext-based UI text internationalization"
   homepage "https://api.kde.org/frameworks/ki18n/html/index.html"
-  url "https://download.kde.org/stable/frameworks/5.80/ki18n-5.80.0.tar.xz"
-  sha256 "883a79d7e6c795148c0fe76f44a6f9ffe34282f827e580e70937fe8259967a7a"
+  url "https://download.kde.org/stable/frameworks/5.87/ki18n-5.87.0.tar.xz"
+  sha256 "115e79ec5cc4825a1f9f6783f6e6da0d56d02feddc89f51ce9e7c205199c250d"
   license all_of: [
     "BSD-3-Clause",
     "LGPL-2.0-or-later",
     any_of: ["LGPL-2.1-only", "LGPL-3.0-only"],
   ]
-  head "https://invent.kde.org/frameworks/ki18n.git"
+  head "https://invent.kde.org/frameworks/ki18n.git", branch: "master"
+
+  # We check the tags from the `head` repository because the latest stable
+  # version doesn't seem to be easily available elsewhere.
+  livecheck do
+    url :head
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   bottle do
-    sha256 arm64_big_sur: "0bc6ccf85a95298dc22d259d711e1fa5249679d806f78f0804a523726546239d"
-    sha256 big_sur:       "10dfd5cfeafe8a4a054db63c7174c6cf52e2b4e34008019efca607d1dcae3051"
-    sha256 catalina:      "c0219c0daed11e67c0a841a33698875e9c118a1acb22d9597362e7fda39c419b"
-    sha256 mojave:        "5a18522ea00b307986429c205e95e7ff82144c6320d43ec6e053cc2b3bb32c20"
+    sha256 cellar: :any, arm64_big_sur: "e8e02e080983e0dc9ba9cfb9978269ab55a8a8e9cdb3207f5a3a16f32bbf677b"
+    sha256 cellar: :any, big_sur:       "bbecfa16898a00a249b33200e6acad4c2b93ef0f45cfe24e57a14cf805bced9a"
+    sha256 cellar: :any, catalina:      "2b8fefac2d37ffeae39edb0a1c6356d291cf196f6796157eeae82d63af583082"
+    sha256 cellar: :any, mojave:        "9ce6019773f1e9f185b9ba7567a5c5894ed9545d64c2be325953f5520ec56efb"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -29,10 +36,9 @@ class Ki18n < Formula
     args << "-DBUILD_TESTING=OFF"
     args << "-DBUILD_QCH=ON"
 
-    mkdir "build" do
-      system "cmake", "..", *args
-      system "make", "install"
-    end
+    system "cmake", "-S", ".", "-B", "build", *args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     pkgshare.install "autotests"
     (pkgshare/"cmake").install "cmake/FindLibIntl.cmake"

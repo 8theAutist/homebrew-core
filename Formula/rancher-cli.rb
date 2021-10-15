@@ -1,10 +1,10 @@
 class RancherCli < Formula
   desc "Unified tool to manage your Rancher server"
   homepage "https://github.com/rancher/cli"
-  url "https://github.com/rancher/cli/archive/v2.4.10.tar.gz"
-  sha256 "cfe1d7a73cc8b2f83dcdf68645ad38a6dca8bc4d178cef123a9203e15a40dc58"
+  url "https://github.com/rancher/cli/archive/v2.4.13.tar.gz"
+  sha256 "4a1aab7193f2e478b12b1000f17f2a8e3545dd5521a140aa90389afdb2ff8357"
   license "Apache-2.0"
-  head "https://github.com/rancher/cli.git"
+  head "https://github.com/rancher/cli.git", branch: "master"
 
   livecheck do
     url :stable
@@ -12,18 +12,17 @@ class RancherCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c622dca7979bbed7ab4213d794200a8aa9eac0bd8ae6991b08e2636f5c974b4a"
-    sha256 cellar: :any_skip_relocation, big_sur:       "9573b4250d11f974d15afc78deabc07d8516d053a77d3311411c46f3ef648ab1"
-    sha256 cellar: :any_skip_relocation, catalina:      "7892f574ed7975505315c87cbffb13101f3da5a4763a1e9ac2fcc7fc951e8f1b"
-    sha256 cellar: :any_skip_relocation, mojave:        "c5cbcad2b1f0ec6f179d23b3e4bb5dda5beb6868091ee702ce0ae8ce57400888"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1fe3c03e1c7389f3aa03de802b23d60986c61e91ad275353984effdd41055b6c"
+    sha256 cellar: :any_skip_relocation, big_sur:       "eceff7f2924ce3aa42e3e5cb180b38eb41a2747321d29d6d2588d0b17d5b20cc"
+    sha256 cellar: :any_skip_relocation, catalina:      "d99b09b8067c46c3bad171bfa9998680a2a13ae658641be7c6fd0830f37a8642"
+    sha256 cellar: :any_skip_relocation, mojave:        "f231900ea626c094b98f7620e12921691fe1f86781a66033ae9b07cdd2721bea"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f22314698f65e0c5af34ae3fd342ad57ed052cdc28a684245620a9e1ee364ccc"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", "-mod=vendor", "-ldflags",
-           "-w -X main.VERSION=#{version}",
-           "-trimpath", "-o", bin/"rancher"
+    system "go", "build", *std_go_args(ldflags: "-s -w -X main.VERSION=#{version}"), "-o", bin/"rancher"
   end
 
   test do

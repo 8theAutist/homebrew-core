@@ -3,37 +3,38 @@ class Circleci < Formula
   homepage "https://circleci.com/docs/2.0/local-cli/"
   # Updates should be pushed no more frequently than once per week.
   url "https://github.com/CircleCI-Public/circleci-cli.git",
-      tag:      "v0.1.15195",
-      revision: "595cc9e2916f5ab8ba9267657a97f3004a5e11eb"
+      tag:      "v0.1.16122",
+      revision: "a170bd39a6dc250aae15394d0b0cac2b4bded34b"
   license "MIT"
-  head "https://github.com/CircleCI-Public/circleci-cli.git"
+  head "https://github.com/CircleCI-Public/circleci-cli.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "96c8a6e002803457c6d6ad478c741cae639eafbb01fe55619ffd733daae0fadb"
-    sha256 cellar: :any_skip_relocation, catalina: "dab02bb6bef331726927c1f14715d3934b7c8ae5cd71aced826db1f58bc092e0"
-    sha256 cellar: :any_skip_relocation, mojave:   "995339d1c3d67f26a0fdab94f08df59e4b98c008ca44fae7c7466e09ca54446e"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b73e0c269b90c7e685cfe6a33a4391694a19955ec3655dad95dd51ce1d3bf0cc"
+    sha256 cellar: :any_skip_relocation, big_sur:       "693c42831d95715071c26255539e569c84a1ddd15b2652bcb24bca6344df281f"
+    sha256 cellar: :any_skip_relocation, catalina:      "605e1fc7b4a68728935caf1d8f67853628e0f098f0c35190e3120e7ba69fd03a"
+    sha256 cellar: :any_skip_relocation, mojave:        "cf9349773bd298cbbb614b6e648436c85913f10c93c9bd7e3a3e35dbd72e366d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "71987e9d4a8b54ef313fbd28af08fee6a1b842025cfefb9a622831d64169fa37"
   end
 
   depends_on "go" => :build
+  depends_on "packr" => :build
 
   def install
-    ENV["GOPATH"] = buildpath
+    system "packr2", "--ignore-imports", "-v"
 
-    dir = buildpath/"src/github.com/CircleCI-Public/circleci-cli"
-    dir.install buildpath.children
+    ldflags = %W[
+      -s -w
+      -X github.com/CircleCI-Public/circleci-cli/version.packageManager=homebrew
+      -X github.com/CircleCI-Public/circleci-cli/version.Version=#{version}
+      -X github.com/CircleCI-Public/circleci-cli/version.Commit=#{Utils.git_short_head}
+    ]
+    system "go", "build", *std_go_args(ldflags: ldflags.join(" "))
 
-    cd dir do
-      ldflags = %W[
-        -s -w
-        -X github.com/CircleCI-Public/circleci-cli/version.packageManager=homebrew
-        -X github.com/CircleCI-Public/circleci-cli/version.Version=#{version}
-        -X github.com/CircleCI-Public/circleci-cli/version.Commit=#{Utils.git_short_head}
-      ]
-      system "make", "pack"
-      system "go", "build", "-ldflags", ldflags.join(" "),
-             "-o", bin/"circleci"
-      prefix.install_metafiles
-    end
+    output = Utils.safe_popen_read("#{bin}/circleci", "--skip-update-check", "completion", "bash")
+    (bash_completion/"circleck").write output
+
+    output = Utils.safe_popen_read("#{bin}/circleci", "--skip-update-check", "completion", "zsh")
+    (zsh_completion/"_circleci").write output
   end
 
   test do

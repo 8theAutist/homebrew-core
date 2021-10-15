@@ -1,16 +1,25 @@
 class Gdbm < Formula
   desc "GNU database manager"
   homepage "https://www.gnu.org/software/gdbm/"
-  url "https://ftp.gnu.org/gnu/gdbm/gdbm-1.19.tar.gz"
-  mirror "https://ftpmirror.gnu.org/gdbm/gdbm-1.19.tar.gz"
-  sha256 "37ed12214122b972e18a0d94995039e57748191939ef74115b1d41d8811364bc"
+  url "https://ftp.gnu.org/gnu/gdbm/gdbm-1.21.tar.gz"
+  mirror "https://ftpmirror.gnu.org/gdbm/gdbm-1.21.tar.gz"
+  sha256 "b0b7dbdefd798de7ddccdd8edf6693a30494f7789777838042991ef107339cc2"
   license "GPL-3.0-or-later"
+  revision 1
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "2eea26ad3d3d013c3ed2e2b985d4749719e8be327bc53b615a1ffbe484264599"
-    sha256 cellar: :any, big_sur:       "3581501b051db1c0d1acccc710fe04453b61777e4d67110485ceca69f30d6d1a"
-    sha256 cellar: :any, catalina:      "a3e43170a1d8413e6817e57b7218828af22a20b2221d804ad529a68248840a51"
-    sha256 cellar: :any, mojave:        "996020d1bc3e8a8060a9fe49b992cd66e7404346a339ae98ef92090724f36fda"
+    sha256 cellar: :any, arm64_big_sur: "fd3c1830264b732ad953e0ec41dd8325ac3c07fc8bf3b8a55a968f4f8947ecc5"
+    sha256 cellar: :any, big_sur:       "a0390a4a2b661b19ca7ef9736aea3df13afda10d13600d7a7e25e0686f97a4d6"
+    sha256 cellar: :any, catalina:      "5037ab5bfdebab730434d93c09ac44a19194edb49fabc25563736695aa2bc309"
+    sha256 cellar: :any, mojave:        "fbe153ad0a746da6ee2dcadb81f6db06bd226945cfa71c61f9215944fa60971b"
+    sha256               x86_64_linux:  "9be34c0de7f42af7b6837a3d0e13bb6e0857bdee1e1e6020b805365c8b41070f"
+  end
+
+  # Fix build failure on macOS. Merged upstream as
+  # https://git.gnu.org.ua/gdbm.git/commit/?id=32517af75ac8c32b3ff4870e14ff28418696c554
+  patch :p0 do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/ad16d309923dd7839d239e05c7fdd86d9b6e5207/gdbm/fix-st_mtim.diff"
+    sha256 "09813e4a01a74fb1c510abbd98abd53c18f5dfb4e66475969f4b173b4ff96935"
   end
 
   # --enable-libgdbm-compat for dbm.h / gdbm-ndbm.h compatibility:

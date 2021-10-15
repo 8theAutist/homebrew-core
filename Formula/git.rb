@@ -2,10 +2,10 @@ class Git < Formula
   desc "Distributed revision control system"
   homepage "https://git-scm.com"
   # NOTE: Please keep these values in sync with git-gui.rb when updating.
-  url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.31.1.tar.xz"
-  sha256 "9f61417a44d5b954a5012b6f34e526a3336dcf5dd720e2bb7ada92ad8b3d6680"
+  url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.33.1.tar.xz"
+  sha256 "e054a6e6c2b088bd1bff5f61ed9ba5aa91c9a3cd509539a4b41c5ddf02201f2f"
   license "GPL-2.0-only"
-  head "https://github.com/git/git.git", shallow: false
+  head "https://github.com/git/git.git"
 
   livecheck do
     url "https://www.kernel.org/pub/software/scm/git/"
@@ -13,32 +13,33 @@ class Git < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "82be780c2468d4e315f861ea797e98a93084bb754d8610c06a346eea74d82150"
-    sha256 big_sur:       "cf1fe81d5928efa530d891ec341d34c262b1eb7ea457191359476168ae323b93"
-    sha256 catalina:      "6247bd388d85b30900923c32c0cd10caf7d48d41429c8f65a780d61b493ee9a4"
-    sha256 mojave:        "ff281db6c9d895705c252ab4a7798c7274df2484c8cd5f22647e76c83ceabfca"
+    sha256 arm64_big_sur: "4e8cc9c2b83d5c376f0342afa91ff4c73a1505ac9963dad06b44c23423fcebf8"
+    sha256 big_sur:       "66e2ded73f2a3b13ac3369cd9416378307337959d3bd61a0c6297fed8456cb3c"
+    sha256 catalina:      "b3a7b591b8c990f4936a917ce17c697a5645e4c2cacc7ae3e0de417b5f5af6fd"
+    sha256 mojave:        "3fc2a3ac7e21325382bd1117081e068fe29206169f0e7b62d31c055012d976d0"
+    sha256 x86_64_linux:  "8e3b6532456c752e077639e42e9bbaa37a034191931ecc237bb99101920b04c3"
   end
 
   depends_on "gettext"
   depends_on "pcre2"
 
-  uses_from_macos "curl"
+  uses_from_macos "curl", since: :catalina # macOS < 10.15.6 has broken cert path logic
   uses_from_macos "expat"
-  uses_from_macos "openssl@1.1"
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "linux-headers"
+    depends_on "linux-headers@4.4"
+    depends_on "openssl@1.1" # Uses CommonCrypto on macOS
   end
 
   resource "html" do
-    url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-htmldocs-2.31.1.tar.xz"
-    sha256 "ae94a6b128d1972a8b4041af9fc529ece96a9f2a13952ff843262ccb7bc1642c"
+    url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-htmldocs-2.33.1.tar.xz"
+    sha256 "6a6b8a0f064c78e0033aa4fce0520325496de019b09fff99fa82eeb472038f5c"
   end
 
   resource "man" do
-    url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-manpages-2.31.1.tar.xz"
-    sha256 "5d0d443c57155da2f201584d4c8c5ad10a0a24ff3af3a7a77cdc8f56dddac702"
+    url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-manpages-2.33.1.tar.xz"
+    sha256 "c75219f1c9f56caad4f8eb17915e4fe34ca5e1b453773df279a2cec98205ab87"
   end
 
   resource "Net::SMTP::SSL" do
@@ -59,7 +60,7 @@ class Git < Formula
 
     perl_version = Utils.safe_popen_read("perl", "--version")[/v(\d+\.\d+)(?:\.\d+)?/, 1]
 
-    on_macos do
+    if OS.mac?
       ENV["PERLLIB_EXTRA"] = %W[
         #{MacOS.active_developer_dir}
         /Library/Developer/CommandLineTools
@@ -67,13 +68,6 @@ class Git < Formula
       ].uniq.map do |p|
         "#{p}/Library/Perl/#{perl_version}/darwin-thread-multi-2level"
       end.join(":")
-    end
-
-    # Ensure we are using the correct system headers (for curl) to workaround
-    # mismatched Xcode/CLT versions:
-    # https://github.com/Homebrew/homebrew-core/issues/46466
-    if MacOS.version == :mojave && MacOS::CLT.installed? && MacOS::CLT.provides_sdk?
-      ENV["HOMEBREW_SDKROOT"] = MacOS::CLT.sdk_path(MacOS.version)
     end
 
     # The git-gui and gitk tools are installed by a separate formula (git-gui)
@@ -87,16 +81,22 @@ class Git < Formula
       CFLAGS=#{ENV.cflags}
       LDFLAGS=#{ENV.ldflags}
       NO_TCLTK=1
-      NO_OPENSSL=1
-      APPLE_COMMON_CRYPTO=1
     ]
+
+    args += if OS.mac?
+      %w[NO_OPENSSL=1 APPLE_COMMON_CRYPTO=1]
+    else
+      openssl_prefix = Formula["openssl@1.1"].opt_prefix
+
+      %W[NO_APPLE_COMMON_CRYPTO=1 OPENSSLDIR=#{openssl_prefix}]
+    end
 
     system "make", "install", *args
 
     git_core = libexec/"git-core"
 
     # Install the macOS keychain credential helper
-    on_macos do
+    if OS.mac?
       cd "contrib/credential/osxkeychain" do
         system "make", "CC=#{ENV.cc}",
                        "CFLAGS=#{ENV.cflags}",
@@ -143,7 +143,7 @@ class Git < Formula
     chmod 0644, Dir["#{share}/doc/git-doc/**/*.{html,txt}"]
     chmod 0755, Dir["#{share}/doc/git-doc/{RelNotes,howto,technical}"]
 
-    # git-send-email needs Net::SMTP::SSL
+    # git-send-email needs Net::SMTP::SSL or Net::SMTP >= 2.34
     resource("Net::SMTP::SSL").stage do
       (share/"perl5").install "lib/Net"
     end
@@ -156,7 +156,7 @@ class Git < Formula
 
     # Set the macOS keychain credential helper by default
     # (as Apple's CLT's git also does this).
-    on_macos do
+    if OS.mac?
       (buildpath/"gitconfig").write <<~EOS
         [credential]
         \thelper = osxkeychain
@@ -180,14 +180,16 @@ class Git < Formula
     system bin/"git", "commit", "-a", "-m", "Initial Commit"
     assert_equal "haunted\nhouse", shell_output("#{bin}/git ls-files").strip
 
-    # Check Net::SMTP::SSL was installed correctly.
-    %w[foo bar].each { |f| touch testpath/f }
-    system bin/"git", "add", "foo", "bar"
-    system bin/"git", "commit", "-a", "-m", "Second Commit"
-    assert_match "Authentication Required", pipe_output(
-      "#{bin}/git send-email --from=test@example.com --to=dev@null.com " \
-      "--smtp-server=smtp.gmail.com --smtp-server-port=587 " \
-      "--smtp-encryption=tls --confirm=never HEAD^ 2>&1",
-    )
+    # Check Net::SMTP or Net::SMTP::SSL works for git-send-email
+    on_macos do
+      %w[foo bar].each { |f| touch testpath/f }
+      system bin/"git", "add", "foo", "bar"
+      system bin/"git", "commit", "-a", "-m", "Second Commit"
+      assert_match "Authentication Required", pipe_output(
+        "#{bin}/git send-email --from=test@example.com --to=dev@null.com " \
+        "--smtp-server=smtp.gmail.com --smtp-server-port=587 " \
+        "--smtp-encryption=tls --confirm=never HEAD^ 2>&1",
+      )
+    end
   end
 end

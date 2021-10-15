@@ -1,16 +1,17 @@
 class Terracognita < Formula
   desc "Reads from existing Cloud Providers and generates Terraform code"
   homepage "https://github.com/cycloidio/terracognita"
-  url "https://github.com/cycloidio/terracognita/archive/v0.6.3.tar.gz"
-  sha256 "505ec50d30fda5d20ce2c67a4340480997df78376f427aa28f7a352fbd7c4400"
+  url "https://github.com/cycloidio/terracognita/archive/v0.7.4.tar.gz"
+  sha256 "7027103c899d29b86dd1dc72e1e2d6d685bec6311673f7fbd31c8127ccd62c82"
   license "MIT"
-  head "https://github.com/cycloidio/terracognita.git"
+  head "https://github.com/cycloidio/terracognita.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8bcd4362188f72c3de80afefa3d8eb07ce32cc31270afebc6d0e379a6e8c750f"
-    sha256 cellar: :any_skip_relocation, big_sur:       "e0fa9596e95a1fd5b7fad0eec6efc77279e34359fd5c13851945f5e8cf789258"
-    sha256 cellar: :any_skip_relocation, catalina:      "b8578fa3b4d8e146e82ff3f4c5a033c980ba5e72c63f2558ee530d1fe6c32387"
-    sha256 cellar: :any_skip_relocation, mojave:        "da3ad7e032bfba9ef62a22cfbeafd978a98c853ec38ed228498c9605297276b8"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d86a19285ec82eb5c63d5f8a1506d5208495ea1824beb87cea1ed24b300fdb68"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2b54d5285bc814e82ddd4a436fad0f0a136f643777a3954ef2ad2c03a5afce03"
+    sha256 cellar: :any_skip_relocation, catalina:      "cbb46e5d8cda59aa40d57db85f05c6e8b86cceb13ce5999887bad3f541029776"
+    sha256 cellar: :any_skip_relocation, mojave:        "0acf733131cc484c14a9276aa8b7c0611f3e7faec0a2d70ebef8149a53f214f8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6222d3967d26904d5894855669f39662322f6ead05759ada13776c906f7ed21e"
   end
 
   depends_on "go" => :build
@@ -22,10 +23,8 @@ class Terracognita < Formula
 
   test do
     assert_match "v#{version}", shell_output("#{bin}/terracognita version")
-
     assert_match "Error: one of --module, --hcl  or --tfstate are required",
       shell_output("#{bin}/terracognita aws 2>&1", 1)
-
     assert_match "aws_instance", shell_output("#{bin}/terracognita aws resources")
   end
 end

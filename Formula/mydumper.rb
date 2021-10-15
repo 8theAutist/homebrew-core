@@ -1,15 +1,16 @@
 class Mydumper < Formula
   desc "How MySQL DBA & support engineer would imagine 'mysqldump' ;-)"
   homepage "https://launchpad.net/mydumper"
-  url "https://github.com/maxbube/mydumper/archive/v0.10.3.tar.gz"
-  sha256 "571f0544ed60359dbcc933f439bd76741d6a51edcee0b1528f4c84e0bd521d9f"
+  url "https://github.com/maxbube/mydumper/archive/v0.11.1-3.tar.gz"
+  sha256 "ec5da4b19522f7b78bf546a9f726166d21f64c3f3e534f55a94313ca1208d770"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "455f95559b2dbe864afba6e25ca4632c08ea01427d893e6b74da705f6ddc3df6"
-    sha256 cellar: :any, big_sur:       "cef3fb7db8b705a3aff4a08105637454015184774d0a967e5ad012a176e5c76f"
-    sha256 cellar: :any, catalina:      "dbd667367fe99a0b5ae562554dc8a8b83d6d66f53be8ab6279dbc52c920c7115"
-    sha256 cellar: :any, mojave:        "8a774ee31ebfcf66b836daeb7e45150040276ad0bde488a4699908bc17bf8663"
+    sha256 cellar: :any,                 arm64_big_sur: "2ea9625aeb3a88f5020d86090a8807a3f56b2ccb3795958712da3be2e0faf63e"
+    sha256 cellar: :any,                 big_sur:       "8341325410e05edcd172e0e0cbae1573669f963b2b6c73545541330d1bb2ab27"
+    sha256 cellar: :any,                 catalina:      "b7e08a8d5d013f0caaaa02b5edd7058cbbccdec3bc405d8b245f501d907155c3"
+    sha256 cellar: :any,                 mojave:        "f5454f9c700b5301bfa103346a9b72f4a8b976c4b2d2e92d549680ebbb583d45"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c93815b1bec5065b7937881ed71c6e9c6f431fd7d3420abdb5f8814b0ad19dc8"
   end
 
   depends_on "cmake" => :build
@@ -22,23 +23,21 @@ class Mydumper < Formula
 
   uses_from_macos "zlib"
 
-  # This patch allows cmake to find .dylib shared libs in macOS. A bug report has
-  # been filed upstream here: https://bugs.launchpad.net/mydumper/+bug/1517966
-  # It also ignores .a libs because of an issue with glib's static libraries now
-  # being included by default in homebrew.
-  #
-  # Although we override the mysql library location this patch is still required
-  # because the setting of ${CMAKE_FIND_LIBRARY_SUFFIXES} affects other probes as well.
-  patch :p0, :DATA
-
   def install
-    system "cmake", ".", *std_cmake_args,
-           # Override location of mysql-client:
-           "-DMYSQL_CONFIG_PREFER_PATH=#{Formula["mysql-client"].opt_bin}",
-           "-DMYSQL_LIBRARIES=#{Formula["mysql-client"].opt_lib}/libmysqlclient.dylib",
-           # find_package(ZLIB) has troube on Big Sur since physical libz.dylib
-           # doesn't exist on the filesystem.  Instead provide details ourselves:
-           "-DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=1", "-DZLIB_INCLUDE_DIRS=/usr/include", "-DZLIB_LIBRARIES=-lz"
+    # Override location of mysql-client
+    args = std_cmake_args + %W[
+      -DMYSQL_CONFIG_PREFER_PATH=#{Formula["mysql-client"].opt_bin}
+      -DMYSQL_LIBRARIES=#{Formula["mysql-client"].opt_lib/shared_library("libmysqlclient")}
+    ]
+    # find_package(ZLIB) has trouble on Big Sur since physical libz.dylib
+    # doesn't exist on the filesystem.  Instead provide details ourselves:
+    if OS.mac?
+      args << "-DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=1"
+      args << "-DZLIB_INCLUDE_DIRS=/usr/include"
+      args << "-DZLIB_LIBRARIES=-lz"
+    end
+
+    system "cmake", ".", *args
     system "make", "install"
   end
 
@@ -46,16 +45,3 @@ class Mydumper < Formula
     system bin/"mydumper", "--help"
   end
 end
-
-__END__
---- cmake/modules/FindMySQL.cmake	2015-09-16 16:11:34.000000000 -0400
-+++ cmake/modules/FindMySQL.cmake	2015-09-16 16:10:56.000000000 -0400
-@@ -84,7 +84,7 @@
- )
-
- set(TMP_MYSQL_LIBRARIES "")
--set(CMAKE_FIND_LIBRARY_SUFFIXES .so .a .lib .so.1)
-+set(CMAKE_FIND_LIBRARY_SUFFIXES .so .lib .dylib .so.1)
- foreach(MY_LIB ${MYSQL_ADD_LIBRARIES})
-     find_library("MYSQL_LIBRARIES_${MY_LIB}" NAMES ${MY_LIB}
-         HINTS

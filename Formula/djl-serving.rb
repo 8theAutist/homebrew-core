@@ -1,11 +1,17 @@
 class DjlServing < Formula
   desc "This module contains an universal model serving implementation"
-  homepage "https://github.com/awslabs/djl/tree/master/serving"
-  url "https://djl-ai.s3.amazonaws.com/publish/djl-serving/serving-0.11.0.tar"
-  sha256 "93dfd5e4efca5208918b016338209de37b96796af6dc584e269093c116f04030"
+  homepage "https://github.com/deepjavalibrary/djl-serving"
+  url "https://publish.djl.ai/djl-serving/serving-0.13.0.tar"
+  sha256 "61c28c03877930f173724f345fa0ca91623af92d02fdc0269c7cce5b82276a56"
   license "Apache-2.0"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c438d15069721e4a5c1d1c34155da406217c14cb06a24f36c1766594b4ca693d"
+    sha256 cellar: :any_skip_relocation, big_sur:       "c438d15069721e4a5c1d1c34155da406217c14cb06a24f36c1766594b4ca693d"
+    sha256 cellar: :any_skip_relocation, catalina:      "c438d15069721e4a5c1d1c34155da406217c14cb06a24f36c1766594b4ca693d"
+    sha256 cellar: :any_skip_relocation, mojave:        "c438d15069721e4a5c1d1c34155da406217c14cb06a24f36c1766594b4ca693d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "399edae507bdaee85fea94f67238a99faab7d666ebe220781991903385cc288e"
+  end
 
   depends_on "openjdk"
 
@@ -19,28 +25,9 @@ class DjlServing < Formula
     (bin/"djl-serving").write_env_script "#{libexec}/bin/djl-serving", env
   end
 
-  plist_options manual: "djl-serving"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Disabled</key>
-          <false/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{bin}/djl-serving</string>
-            <string>run</string>
-          </array>
-          <key>KeepAlive</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"djl-serving", "run"]
+    keep_alive true
   end
 
   test do

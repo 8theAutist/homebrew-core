@@ -1,20 +1,22 @@
 class Guile < Formula
   desc "GNU Ubiquitous Intelligent Language for Extensions"
   homepage "https://www.gnu.org/software/guile/"
-  url "https://ftp.gnu.org/gnu/guile/guile-3.0.6.tar.xz"
-  mirror "https://ftpmirror.gnu.org/guile/guile-3.0.6.tar.xz"
-  sha256 "e2bd83c2077d721356e7579ca33097a13a20e2b7eda6c2362ee1166fbc845d28"
+  url "https://ftp.gnu.org/gnu/guile/guile-3.0.7.tar.xz"
+  mirror "https://ftpmirror.gnu.org/guile/guile-3.0.7.tar.xz"
+  sha256 "f57d86c70620271bfceb7a9be0c81744a033f08adc7ceba832c9917ab3e691b7"
   license "LGPL-3.0-or-later"
+  revision 2
 
   bottle do
-    sha256 arm64_big_sur: "255f1c5e4681e3c99782e8dcaaa41cce0736ec47df586ffa2e87619acb4d17f5"
-    sha256 big_sur:       "a2e04c21e977535787a1ac25f3386766b906d651fc4ee8c35a1446cd3406896b"
-    sha256 catalina:      "71556bfc3938b63392f18c37902e6e029c1c9cf6e1529f8b87e916de67e9d833"
-    sha256 mojave:        "5cc5b20ad2c0022a648235b68c05a04017174908a07beb6de89968d32e0b3a6a"
+    sha256 arm64_big_sur: "9f383d7cc5fe926b957e1f6d280a0dbb1752c822e4e28170331060c8284a83ae"
+    sha256 big_sur:       "707b16f2249da069f21acadc2a2d1c0721c84251a3fe455b97e0d02b82d4a471"
+    sha256 catalina:      "e6933c219cefd49ff8d0600dc7b6f484319978da91beb6896c5d3d8b8048e876"
+    sha256 mojave:        "4f71c527bff738902cb2412242c445bd25927af19e6705faac59e633b41c956e"
+    sha256 x86_64_linux:  "ec6b2a3f9d14830c1ae0a362a50bcd2bbb703eb1f0e8fd6f0f2d191e74aa3d8c"
   end
 
   head do
-    url "https://git.savannah.gnu.org/git/guile.git"
+    url "https://git.savannah.gnu.org/git/guile.git", branch: "main"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
@@ -32,6 +34,14 @@ class Guile < Formula
   depends_on "readline"
 
   uses_from_macos "gperf"
+
+  # This patch fixes an issue where Guile >= 3.0.6 doesn't properly load dynamic
+  # libraries on macOS.
+  # To be removed after Guile 3.0.8 is released.
+  patch do
+    url "https://git.savannah.gnu.org/cgit/guile.git/patch/?id=1f100a4f20c3a6e57922fb26fce212997e2a03cb"
+    sha256 "a5adf2586b30381cf24524c7fc0364115f7cb1f568d2b69a9f3fb49ad8355b55"
+  end
 
   def install
     # Avoid superenv shim

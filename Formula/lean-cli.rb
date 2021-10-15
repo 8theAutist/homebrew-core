@@ -1,16 +1,17 @@
 class LeanCli < Formula
   desc "Command-line tool to develop and manage LeanCloud apps"
   homepage "https://github.com/leancloud/lean-cli"
-  url "https://github.com/leancloud/lean-cli/archive/v0.24.3.tar.gz"
-  sha256 "7532bf75c631c46f4092cea7afae23f7bcaca582ebe5870dc66f364c4fbe43ad"
+  url "https://github.com/leancloud/lean-cli/archive/v0.27.0.tar.gz"
+  sha256 "8d9219abf27ec909577f9736456478242d99d5e2ac0d621fab7c7bc85cce9dd1"
   license "Apache-2.0"
   head "https://github.com/leancloud/lean-cli.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "4501a59d653062563f705682ab19a8621aac54efa3114983255ed3b4479def3e"
-    sha256 cellar: :any_skip_relocation, big_sur:       "c2fdb9c96635a3d8d45a46cd5d43290866d1c8ed5b0ca4c6c958c0598c7a9f0a"
-    sha256 cellar: :any_skip_relocation, catalina:      "3bbf191c95b9e07d750970a1ee0787f5acd680f204029d40b67bb3a40e3698b9"
-    sha256 cellar: :any_skip_relocation, mojave:        "08eebf1914750b5eb027aa3f4088459aa4ce8dad4879f7ba12fcb20aacf9d612"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "5bacc2bf6ba21ea6a79f63f80448fe35f4d2a919607dd8d0f191c75f7c0e0408"
+    sha256 cellar: :any_skip_relocation, big_sur:       "db63d361bede85efe0285ab80f41c20a860c4377bf7c3e175c027775a3a7db1d"
+    sha256 cellar: :any_skip_relocation, catalina:      "311eb64400cd1f98edc8dc4589868fdb521b183d70017579e1cb7e053989bde9"
+    sha256 cellar: :any_skip_relocation, mojave:        "86f52bf4114a9070f2deeeb3269e33b0a83f22109771948cb069544620a45d78"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2a1481596ba725ca6c93819fd9811db036d44569d9a8621eff59925b1f2139e1"
   end
 
   depends_on "go" => :build
@@ -29,6 +30,6 @@ class LeanCli < Formula
 
   test do
     assert_match "lean version #{version}", shell_output("#{bin}/lean --version")
-    assert_match "Please login first.", shell_output("#{bin}/lean init 2>&1", 1)
+    assert_match "Please log in first.", shell_output("#{bin}/lean init 2>&1", 1)
   end
 end

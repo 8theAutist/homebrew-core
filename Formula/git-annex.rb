@@ -1,16 +1,17 @@
 class GitAnnex < Formula
   desc "Manage files with git without checking in file contents"
   homepage "https://git-annex.branchable.com/"
-  url "https://hackage.haskell.org/package/git-annex-8.20210428/git-annex-8.20210428.tar.gz"
-  sha256 "e871e6d205c9f5eeff74586026f4353a352f9a935ca4a13439080043ed85fb76"
+  url "https://hackage.haskell.org/package/git-annex-8.20211011/git-annex-8.20211011.tar.gz"
+  sha256 "8dc76be8821227601eaca42b4cf08c02f8296984d08649cf6d7655188348470b"
   license all_of: ["AGPL-3.0-or-later", "BSD-2-Clause", "BSD-3-Clause",
                    "GPL-2.0-only", "GPL-3.0-or-later", "MIT"]
-  head "git://git-annex.branchable.com/"
+  head "git://git-annex.branchable.com/", branch: "master"
 
   bottle do
-    sha256 cellar: :any, big_sur:  "c3a97a5449bbfd1d771c913b764374d63daf6e0c3648866d5caa698d809b4a7a"
-    sha256 cellar: :any, catalina: "a93c752b61d9de0b88ce1dfd069e0bdaaad045d9b4f9343fbac1a1bdc1ae290e"
-    sha256 cellar: :any, mojave:   "9ef00a75f6caf8830da7a34d1384dce8d2603e11f3eed2f93d03f75a87f6aa5b"
+    sha256 cellar: :any,                 big_sur:      "3d05d2c831ad829282da8bd8f168114dac80b2b12334fd1a5dce39b7bf0a9da6"
+    sha256 cellar: :any,                 catalina:     "6d91da4af43b7a08e707d6ba5b98d559f84e9d0ae6bb0c419eea7403b6cb346d"
+    sha256 cellar: :any,                 mojave:       "bc747428916af1f7d63cd15a63dca3a45e1247286a0fae755ec8f51525ed1ac3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "85f9bbe741faeaac654a8929d6aabe15a767528a38b0e5c97e2b832c49f27c95"
   end
 
   depends_on "cabal-install" => :build
@@ -27,29 +28,8 @@ class GitAnnex < Formula
     bin.install_symlink "git-annex" => "git-annex-shell"
   end
 
-  plist_options manual: "git annex assistant --autostart"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>KeepAlive</key>
-          <false/>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/git-annex</string>
-            <string>assistant</string>
-            <string>--autostart</string>
-          </array>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"git-annex", "assistant", "--autostart"]
   end
 
   test do

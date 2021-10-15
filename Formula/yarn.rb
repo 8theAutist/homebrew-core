@@ -1,9 +1,8 @@
 class Yarn < Formula
   desc "JavaScript package manager"
   homepage "https://yarnpkg.com/"
-  # Should only be updated if the new version is listed as a stable release on the homepage
-  url "https://yarnpkg.com/downloads/1.22.10/yarn-v1.22.10.tar.gz"
-  sha256 "7e433d4a77e2c79e6a7ae4866782608a8e8bcad3ec6783580577c59538381a6e"
+  url "https://yarnpkg.com/downloads/1.22.15/yarn-v1.22.15.tar.gz"
+  sha256 "0c2841b9423f0fb9657ae6b18873f39551396ec242bfb882b11bed9e4648235e"
   license "BSD-2-Clause"
 
   livecheck do
@@ -11,7 +10,7 @@ class Yarn < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "5c8f50922a573a4fc2f15b2b5b0fb457d93312474f85b1a23dd3af7d3e072650"
+    sha256 cellar: :any_skip_relocation, all: "b9a156f01c5a5691efcb5f32731b6e3b3a6950d8882fb54e75662ee6bbfead67"
   end
 
   depends_on "node"
@@ -33,6 +32,9 @@ class Yarn < Formula
   test do
     (testpath/"package.json").write('{"name": "test"}')
     system bin/"yarn", "add", "jquery"
-    system bin/"yarn", "add", "fsevents", "--build-from-source=true"
+    on_macos do
+      # macOS specific package
+      system bin/"yarn", "add", "fsevents", "--build-from-source=true"
+    end
   end
 end

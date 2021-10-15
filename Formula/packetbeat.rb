@@ -2,21 +2,24 @@ class Packetbeat < Formula
   desc "Lightweight Shipper for Network Data"
   homepage "https://www.elastic.co/products/beats/packetbeat"
   url "https://github.com/elastic/beats.git",
-      tag:      "v7.12.1",
-      revision: "651a2ad1225f3d4420a22eba847de385b71f711d"
+      tag:      "v7.15.0",
+      revision: "9023152025ec6251bc6b6c38009b309157f10f17"
   license "Apache-2.0"
-  head "https://github.com/elastic/beats.git"
+  head "https://github.com/elastic/beats.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "cb82731460bb42bb3d0cb27536d267f96d2b8b347d0f7c0701abe748d8f22be3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "4e6bf947ed617093f3c7442ed2044eb730e81e06540f6097175655e6d5ef6b92"
-    sha256 cellar: :any_skip_relocation, catalina:      "e141a5857e65476991795bb5fed77d9b23b9ca133b29634cdd8a0e2909457820"
-    sha256 cellar: :any_skip_relocation, mojave:        "38485a8fa4ab2fadc6b69060ed1be4e1ea933bc5b2449acbaac6e47c103384e2"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1d887c0f7076735406de0c70b1026577ced4d73a9de8adbf147a996d48673b37"
+    sha256 cellar: :any_skip_relocation, big_sur:       "bf100c46077817995a2379e1177504f63213e100ef89660a6b39c2e00aa4ea68"
+    sha256 cellar: :any_skip_relocation, catalina:      "c159636b3ca767819fa875c4818bdcd399c716b8f34a61460adfcba1adba2021"
+    sha256 cellar: :any_skip_relocation, mojave:        "b869c5f9ef25d88c3e44c53b0e5d475a677e71a44d179bb682d63faf09836dac"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c9ab0a640315e6ea6ea8e3bbe0db8021da00a032faea51c3af9a34447c7a7990"
   end
 
   depends_on "go" => :build
   depends_on "mage" => :build
   depends_on "python@3.9" => :build
+
+  uses_from_macos "libpcap"
 
   def install
     # remove non open source files
@@ -47,28 +50,17 @@ class Packetbeat < Formula
     EOS
   end
 
-  plist_options manual: "packetbeat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/packetbeat</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"packetbeat"
   end
 
   test do
-    assert_match "0: en0", shell_output("#{bin}/packetbeat devices")
+    eth = if OS.mac?
+      "en"
+    else
+      "eth"
+    end
+    assert_match "0: #{eth}0", shell_output("#{bin}/packetbeat devices")
     assert_match version.to_s, shell_output("#{bin}/packetbeat version")
   end
 end

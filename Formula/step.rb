@@ -1,26 +1,28 @@
 class Step < Formula
   desc "Crypto and x509 Swiss-Army-Knife"
   homepage "https://smallstep.com"
-  url "https://github.com/smallstep/cli/releases/download/v0.15.16/step_0.15.16.tar.gz"
-  sha256 "4366c90497420ca1a51fd1ba558826d7502467e7eed40654cf7f08dbc8854c27"
+  url "https://github.com/smallstep/cli/releases/download/v0.17.6/step_0.17.6.tar.gz"
+  sha256 "06a9ff7c0ccfdb4d1bbd9abd36e191bd5aed9e66c08a68ddf3c2a203c2bd9aae"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b488bf4f0ce687ba91bce50f4dd37563dfb0cdc41aeef6a6fc58708309283c63"
-    sha256 cellar: :any_skip_relocation, big_sur:       "2a42a0742849f428c0f50115ea665ad3b99b1680e063b2fdf50c896eb6fe818a"
-    sha256 cellar: :any_skip_relocation, catalina:      "107841d1447a1acce30135b12c4b9f3dc490d28d8db29cd408ea00aac9e4abf8"
-    sha256 cellar: :any_skip_relocation, mojave:        "579cf95e326aa4de5fde7be9ee71bce0260da14662e451e6468991104b4386e1"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7749ded5fdbff3ddd3587611f8222fab4410ef85ed785e6e0bdde1dae13658a3"
+    sha256 cellar: :any_skip_relocation, big_sur:       "5f824b0604b7b3abf7ff503b95b39779078209e6d1fcd57b7f5646c1ecc28847"
+    sha256 cellar: :any_skip_relocation, catalina:      "41545598502ad9e2cb27eb8b5226f835cefc8ab1d3f60d403fd2dd00394e335e"
+    sha256 cellar: :any_skip_relocation, mojave:        "08bf1064bc52177082c49d2e16ec220ce626759e4f3614368f229b1983cc6f80"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "937441b8dcd95b2965f12912997291d3097df8fca0723e1d9976a5ead6af03d9"
   end
 
   depends_on "go" => :build
 
   resource "certificates" do
-    url "https://github.com/smallstep/certificates/releases/download/v0.15.14/step-ca_0.15.14.tar.gz"
-    sha256 "a2e479444e362dd2045f13941353393cb79bc09eb6c24d19bb07af4bb6a4ffcc"
+    url "https://github.com/smallstep/certificates/releases/download/v0.17.4/step-ca_0.17.4.tar.gz"
+    sha256 "1aefb9951320685815ebaa90af5d5afcdecf017ae4025cf1e75fc5df156d94e4"
   end
 
   def install
     ENV["VERSION"] = version.to_s
+    ENV["CGO_OVERRIDE"] = "CGO_ENABLED=1"
     system "make", "build"
     bin.install "bin/step" => "step"
     bash_completion.install "autocomplete/bash_autocomplete" => "step"
@@ -28,6 +30,7 @@ class Step < Formula
 
     resource("certificates").stage do |r|
       ENV["VERSION"] = r.version.to_s
+      ENV["CGO_OVERRIDE"] = "CGO_ENABLED=1"
       system "make", "build"
       bin.install "bin/step-ca" => "step-ca"
     end
@@ -94,7 +97,7 @@ class Step < Formula
       assert_match(/^ok$/, File.read(testpath/"health_response.txt"))
 
       shell_output("#{bin}/step ca token --password-file #{testpath}/password.txt " \
-"homebrew-smallstep-leaf > token.txt")
+                   "homebrew-smallstep-leaf > token.txt")
       token = File.read(testpath/"token.txt")
       system "#{bin}/step", "ca", "certificate", "--token", token,
           "homebrew-smallstep-leaf", "brew.crt", "brew.key"

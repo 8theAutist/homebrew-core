@@ -2,16 +2,17 @@ class Tile38 < Formula
   desc "In-memory geolocation data store, spatial index, and realtime geofence"
   homepage "https://tile38.com/"
   url "https://github.com/tidwall/tile38.git",
-      tag:      "1.23.0",
-      revision: "f5c9bb0c2591241cc0f7013e7721f72d7f1f3ba7"
+      tag:      "1.26.1",
+      revision: "72b3683f27dac650aa38174c7fa3cda7c211d677"
   license "MIT"
-  head "https://github.com/tidwall/tile38.git"
+  head "https://github.com/tidwall/tile38.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a5468a5b373a5aa59f9e50fc054bc5fb424e21101277e5eb5e8d1b49a6823898"
-    sha256 cellar: :any_skip_relocation, big_sur:       "03fd8b8ee4d25ded40fa216e2497823cd49224d4129a422fbf04923b5ffd551e"
-    sha256 cellar: :any_skip_relocation, catalina:      "1bd80ef965a55f4e9bfa24bb7b0de27a24125f0b1cb4da35140c97b6d3d36741"
-    sha256 cellar: :any_skip_relocation, mojave:        "c36fb3050e3358352fdad7492f13e35059e1aa2d31ad11ab57dc63c1c91df957"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c41a9f79bbb5e0ed8eac4a23e1669380595218c28992783cc80e19f33a245610"
+    sha256 cellar: :any_skip_relocation, big_sur:       "efcb79971e76639e09fcabf2c2188c3653f5bf9cde4572e0d9c77d8b87697161"
+    sha256 cellar: :any_skip_relocation, catalina:      "6c622e5d2cd6f0d9457ecebfcde4c4a254a7525338e579b66af2b2eb3c7894d9"
+    sha256 cellar: :any_skip_relocation, mojave:        "2397ac31817cb6ee8aee1ca2edb6aa1c8667a44de559482ab03989008f37e6cc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eb3bc55ca42bfcc0e10cecb803254a1ad708b97c85d56f52b3c4f742b063685c"
   end
 
   depends_on "go" => :build
@@ -25,10 +26,10 @@ class Tile38 < Formula
       -s -w
       -X github.com/tidwall/tile38/core.Version=#{version}
       -X github.com/tidwall/tile38/core.GitSHA=#{Utils.git_short_head}
-    ]
+    ].join(" ")
 
-    system "go", "build", "-o", bin/"tile38-server", "-ldflags", ldflags.join(" "), "./cmd/tile38-server"
-    system "go", "build", "-o", bin/"tile38-cli", "-ldflags", ldflags.join(" "), "./cmd/tile38-cli"
+    system "go", "build", *std_go_args(ldflags: ldflags), "-o", bin/"tile38-server", "./cmd/tile38-server"
+    system "go", "build", *std_go_args(ldflags: ldflags), "-o", bin/"tile38-cli", "./cmd/tile38-cli"
   end
 
   def post_install
@@ -42,38 +43,12 @@ class Tile38 < Formula
     EOS
   end
 
-  plist_options manual: "tile38-server -d #{HOMEBREW_PREFIX}/var/tile38/data"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <dict>
-            <key>SuccessfulExit</key>
-            <false/>
-          </dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/tile38-server</string>
-            <string>-d</string>
-            <string>#{datadir}</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/tile38.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/tile38.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"tile38-server", "-d", var/"tile38/data"]
+    keep_alive true
+    working_dir var
+    log_path var/"log/tile38.log"
+    error_log_path var/"log/tile38.log"
   end
 
   test do

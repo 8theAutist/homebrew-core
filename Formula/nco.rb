@@ -1,10 +1,9 @@
 class Nco < Formula
   desc "Command-line operators for netCDF and HDF files"
   homepage "https://nco.sourceforge.io/"
-  url "https://github.com/nco/nco/archive/4.9.8.tar.gz"
-  sha256 "1ef3e887f0841cec3b117ec14830b7d002f7a3a4d0e33a95ae1aa66d0d66ee4b"
+  url "https://github.com/nco/nco/archive/5.0.2.tar.gz"
+  sha256 "7486e7e03da4caf2736e8eb3d2299a686fb58dbcc04391ce073e0a8c2baf80d6"
   license "BSD-3-Clause"
-  revision 2
 
   livecheck do
     url :stable
@@ -12,9 +11,10 @@ class Nco < Formula
   end
 
   bottle do
-    sha256 cellar: :any, big_sur:  "6fa308aa4f2bb927d09cf640ee03dc27f84a21eff3787ace21c31d649237c4fe"
-    sha256 cellar: :any, catalina: "15fbbad80de0a414fe975f78bada336ee9d908f0580f496679ac1dd684770aad"
-    sha256 cellar: :any, mojave:   "19d34e0db690aeb6c3950216c5c307c3a2270f24e2896079250205301f85ce0f"
+    sha256 cellar: :any, arm64_big_sur: "9f3ec489259da71a4d3275e483d2b8ebbab31294bed962d1fd4e97d645426755"
+    sha256 cellar: :any, big_sur:       "d7da7609d9399a60c9291b312a0fcb41e66e34e1fab08b5b5db22f7d0cc94dcb"
+    sha256 cellar: :any, catalina:      "955242dc2318ae49b5c43764ba5ad026e83462fe5ce9277803f12219674d10b4"
+    sha256 cellar: :any, mojave:        "0d53fde9a7fc26e2125aa87a47134ba13adcfe1b73ec3affb6c81fa2973b7afb"
   end
 
   head do

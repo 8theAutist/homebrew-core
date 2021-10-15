@@ -4,10 +4,11 @@ class Nodebrew < Formula
   url "https://github.com/hokaccha/nodebrew/archive/v1.1.0.tar.gz"
   sha256 "b2046d97392ed971254bee2026cfcf8fb59225f51b566ec4b77e9355a861c8a7"
   license "MIT"
-  head "https://github.com/hokaccha/nodebrew.git"
+  head "https://github.com/hokaccha/nodebrew.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "5e9e02328f5023fe172b99cca642dc4d4fe89b82ea8d29293d6d7f8853f2a048"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "f9e68ad3b92827534fc9faf5d7b9c4d1fe61e4e1fa11a99e03c6cc476593fe09"
   end
 
   def install

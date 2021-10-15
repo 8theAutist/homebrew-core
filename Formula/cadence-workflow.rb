@@ -1,16 +1,18 @@
 class CadenceWorkflow < Formula
   desc "Distributed, scalable, durable, and highly available orchestration engine"
   homepage "https://cadenceworkflow.io/"
-  url "https://github.com/uber/cadence/archive/refs/tags/v0.18.2.tar.gz"
-  sha256 "1cdffbee29d9455a0ff4e61114f93b1f5fc210366b707b7dd496a90325a21dce"
+  url "https://github.com/uber/cadence.git",
+      tag:      "v0.22.1",
+      revision: "88a53b42f69cec51790d46a9d1b3333cd9a8a382"
   license "MIT"
-  head "https://github.com/uber/cadence.git"
+  head "https://github.com/uber/cadence.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "4108b02d4a11dba98b26af83c2633550d922eeb00160218458f9896244cc6b25"
-    sha256 cellar: :any_skip_relocation, big_sur:       "04a9302cdc9bd7ac3986ba5dba8d786dda09737410071b5d33d59645369bb0fe"
-    sha256 cellar: :any_skip_relocation, catalina:      "2402f801a03a4d4a5a557958e0f7342e70901c988475eaed26ac02e1f9e84fa8"
-    sha256 cellar: :any_skip_relocation, mojave:        "5f123ab1904790aa0442ad18d3f9fc09ee99799711403e96e613964c3ad84ac3"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "eb11b10bda98b3a84ae70c022fbdd5b21fed571a5e604d33071f92211b407977"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2e086ba5ae78d9bbbeb1b7b1498cfa6eadf3a87c7d2f0bb2cdbf6c5e33cce087"
+    sha256 cellar: :any_skip_relocation, catalina:      "72006c3ae1010c72e2d429a51f7548a655ad4c5bb5d69560e1f0d278eaf47057"
+    sha256 cellar: :any_skip_relocation, mojave:        "ead79d3141d2d7fe840b87350373dc4f030e0d5a2f5878eb07eb1a884e83b9b1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d8c3240980dcd953ac09934a87bc90d0dcf81148cda854c6a08301659f026e7e"
   end
 
   depends_on "go" => :build
@@ -18,6 +20,7 @@ class CadenceWorkflow < Formula
   conflicts_with "cadence", because: "both install an `cadence` executable"
 
   def install
+    system "make", ".fake-codegen"
     system "make", "cadence", "cadence-server", "cadence-canary", "cadence-sql-tool", "cadence-cassandra-tool"
     bin.install "cadence"
     bin.install "cadence-server"
