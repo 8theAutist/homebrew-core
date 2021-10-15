@@ -1,11 +1,13 @@
 class Bundletool < Formula
   desc "Command-line tool to manipulate Android App Bundles"
   homepage "https://github.com/google/bundletool"
-  url "https://github.com/google/bundletool/releases/download/1.5.0/bundletool-all-1.5.0.jar"
-  sha256 "b7452e243a8bb32762ef74017f68291c685be0b3006b4b199fb94a7e7793dc85"
+  url "https://github.com/google/bundletool/releases/download/1.8.1/bundletool-all-1.8.1.jar"
+  sha256 "08e6ca2ab3ef8bbcb088c9ca58a871adfebadab90ddf3190e3a930172ffb3f43"
   license "Apache-2.0"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, all: "14a1731c3cd8f130bec95ecdd90a6368790ab5705fcfa647d9faf9847e963343"
+  end
 
   depends_on "openjdk"
 

@@ -1,11 +1,10 @@
 class Node < Formula
   desc "Platform built on V8 to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v16.0.0/node-v16.0.0.tar.xz"
-  sha256 "47cb90111e8c3dc42dc538464789415354f0d933587fc89fff71f9bd816aaa02"
+  url "https://nodejs.org/dist/v16.11.1/node-v16.11.1.tar.xz"
+  sha256 "67587f4de25e30a9cc0b51a6033eca3bc82d7b4e0d79bb84a265e88f76ab6278"
   license "MIT"
-  revision 1
-  head "https://github.com/nodejs/node.git"
+  head "https://github.com/nodejs/node.git", branch: "master"
 
   livecheck do
     url "https://nodejs.org/dist/"
@@ -13,28 +12,51 @@ class Node < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "1e8f57059c81e915a269034a093db9e119e6c3510762b338b7959c371ab6eca5"
-    sha256 cellar: :any, big_sur:       "fcbfec8e0a91d9013bd1d944c75085c076442c1e804e2c5b1f41057700adaaae"
-    sha256 cellar: :any, catalina:      "f2529dfd77086b031a469b4c910ca70feba5e3d6947ca387dedd8fc69cb30da2"
-    sha256 cellar: :any, mojave:        "bd9fd9ac3e62b8c2309a1d25659a4f3920a918413321280426de8e6d8fac6de0"
+    sha256 cellar: :any,                 arm64_big_sur: "a43113837382d103c08a9b7194928e0ffadfff89fe99b7613d774930e21a9940"
+    sha256 cellar: :any,                 big_sur:       "bc7ed2beff7569491d89733c6202d212bc2d2abceb7b4293aa865a8728574a6e"
+    sha256 cellar: :any,                 catalina:      "51d62734b48ec8638611cb96dd0fd01fed32a8b66dff2034e154ed5d7417b629"
+    sha256 cellar: :any,                 mojave:        "beaeecf1d092cb96c097536768b530ea3fedb9b46a12e070d6b408a8cbc8e9c6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b6772206fe1ca79974d979719d84ef7ea45d5b5c70dee40887fd0e278c49477d"
   end
 
   depends_on "pkg-config" => :build
-  depends_on "python@3.9" => :build
   depends_on "brotli"
   depends_on "c-ares"
   depends_on "icu4c"
+  depends_on "libnghttp2"
   depends_on "libuv"
-  depends_on "nghttp2"
   depends_on "openssl@1.1"
+  depends_on "python@3.9"
 
   uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with :clang do
+    build 1099
+    cause "Node requires Xcode CLT 11+"
+  end
+
+  fails_with gcc: "5"
 
   # We track major/minor from upstream Node releases.
   # We will accept *important* npm patch releases when necessary.
   resource "npm" do
-    url "https://registry.npmjs.org/npm/-/npm-7.10.0.tgz"
-    sha256 "a8e88cd338da1ba283d857fc4e9b5ac27d8a42e248f1beb522110d14a94f34c2"
+    url "https://registry.npmjs.org/npm/-/npm-8.0.0.tgz"
+    sha256 "7b42b3cc7deeda21df3a7e91ce81c6c466bdab99f204e20f2a336f4628366219"
+  end
+
+  # Fix build with brewed c-ares.
+  # https://github.com/nodejs/node/pull/39739
+  #
+  # Remove when the following lands in a *c-ares* release:
+  # https://github.com/c-ares/c-ares/commit/7712fcd17847998cf1ee3071284ec50c5b3c1978
+  # https://github.com/c-ares/c-ares/pull/417
+  patch do
+    url "https://github.com/nodejs/node/commit/8699aa501c4d4e1567ebe8901e5ec80cadaa9323.patch?full_index=1"
+    sha256 "678643c79258372d5054d3da16bc0c5db17130f151f0e72b6e4f20817987aac9"
   end
 
   def install
@@ -55,14 +77,15 @@ class Node < Formula
       --shared-cares
       --shared-libuv-includes=#{Formula["libuv"].include}
       --shared-libuv-libpath=#{Formula["libuv"].lib}
-      --shared-nghttp2-includes=#{Formula["nghttp2"].include}
-      --shared-nghttp2-libpath=#{Formula["nghttp2"].lib}
+      --shared-nghttp2-includes=#{Formula["libnghttp2"].include}
+      --shared-nghttp2-libpath=#{Formula["libnghttp2"].lib}
       --shared-openssl-includes=#{Formula["openssl@1.1"].include}
       --shared-openssl-libpath=#{Formula["openssl@1.1"].lib}
       --shared-brotli-includes=#{Formula["brotli"].include}
       --shared-brotli-libpath=#{Formula["brotli"].lib}
       --shared-cares-includes=#{Formula["c-ares"].include}
       --shared-cares-libpath=#{Formula["c-ares"].lib}
+      --openssl-use-def-ca-store
     ]
     args << "--tag=head" if build.head?
 
@@ -136,7 +159,7 @@ class Node < Formula
     assert_predicate HOMEBREW_PREFIX/"bin/npm", :executable?, "npm must be executable"
     npm_args = ["-ddd", "--cache=#{HOMEBREW_CACHE}/npm_cache", "--build-from-source"]
     system "#{HOMEBREW_PREFIX}/bin/npm", *npm_args, "install", "npm@latest"
-    system "#{HOMEBREW_PREFIX}/bin/npm", *npm_args, "install", "bufferutil" unless head?
+    system "#{HOMEBREW_PREFIX}/bin/npm", *npm_args, "install", "ref-napi" unless head?
     assert_predicate HOMEBREW_PREFIX/"bin/npx", :exist?, "npx must exist"
     assert_predicate HOMEBREW_PREFIX/"bin/npx", :executable?, "npx must be executable"
     assert_match "< hello >", shell_output("#{HOMEBREW_PREFIX}/bin/npx --yes cowsay hello")

@@ -1,16 +1,17 @@
 class Libxlsxwriter < Formula
   desc "C library for creating Excel XLSX files"
   homepage "https://libxlsxwriter.github.io/"
-  url "https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.0.1.tar.gz"
-  sha256 "86df82e1180f07bd0be19225776db8fbe199d66e715a343d8c0c3444b05ec00b"
+  url "https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.4.tar.gz"
+  sha256 "b379eb35fdd9c653ebe72485b9c992f612c7ea66f732784457997d6e782f619b"
   license "BSD-2-Clause"
   head "https://github.com/jmcnamara/libxlsxwriter.git"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "999eb95f618b418ca99240b283548adbcf12eb99d1e62813cbfd49938348764b"
-    sha256 cellar: :any, big_sur:       "de5c2f9973ef064bcc233d71f1f99b5e6d1c4bd36ac0ae5ec05572d6b2df2245"
-    sha256 cellar: :any, catalina:      "bb25092f10d6a9a90e60197dcd2e436d3d6f02e0727af827824ba423848beab7"
-    sha256 cellar: :any, mojave:        "4f64a83667eccb3152f8ba5df8f97af41e8c6c8d3b813ca69942a53c8d1353f3"
+    sha256 cellar: :any,                 arm64_big_sur: "dfca35f0c0735f22dac0ca4081ca92a6415ad77ff00c9ca3ca175b1ffa6da07c"
+    sha256 cellar: :any,                 big_sur:       "72348a4f461cd7bcaf647f543240df0b82440c1270b2dc822c01aedc234edf65"
+    sha256 cellar: :any,                 catalina:      "fcfefb03bb85a8f98a4b826fb659cc37aa40313bd7a35b6d30e267414c1c6bc8"
+    sha256 cellar: :any,                 mojave:        "22be91c9b0176f159ee48e0aecdd27bcf23f020bee636db81e396e5cdf31df8d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3e3019cb7fc349d51c5907f2059997927607dad187e9b610d9570d6b43ffe819"
   end
 
   uses_from_macos "zlib"

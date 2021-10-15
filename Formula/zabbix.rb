@@ -1,25 +1,17 @@
 class Zabbix < Formula
   desc "Availability and monitoring solution"
   homepage "https://www.zabbix.com/"
-  url "https://cdn.zabbix.com/zabbix/sources/stable/5.0/zabbix-5.0.10.tar.gz"
-  sha256 "8bc5b715750a57b88e5d01518ffe98c77ce58a4c9fc1377ed05e53b6835c6b96"
+  url "https://cdn.zabbix.com/zabbix/sources/stable/5.4/zabbix-5.4.5.tar.gz"
+  sha256 "f34294bde635356b8cd1cf522190813a818650389c85bdbc4609588f2dcc1406"
   license "GPL-2.0-or-later"
-
-  # As of writing, the Zabbix SourceForge repository is missing the latest
-  # version (4.4.8), so we have to check for the newest version on the Zabbix
-  # CDN index page instead. Unfortunately, the versions are separated into
-  # folders for a given major/minor version, so this will quietly stop being
-  # a proper check sometime in the future and need to be updated.
-  livecheck do
-    url "https://cdn.zabbix.com/zabbix/sources/stable/5.0/"
-    regex(/href=.*?zabbix[._-](\d+(?:\.\d+)+)\.t/i)
-  end
+  head "https://github.com/zabbix/zabbix.git", branch: "master"
 
   bottle do
-    sha256 arm64_big_sur: "3b21b8ffece10e46291db35e74def32b44965976ae5f6cdbabe1464037cf552c"
-    sha256 big_sur:       "bdb8a1a1bbc6e6ccad8713b85090763d3525a16cf146da3328faa3ab551d76c4"
-    sha256 catalina:      "6b257979b0f3a4c95ca8d048e67d8ecbf490605704ef1e30343be06e4333e289"
-    sha256 mojave:        "7fe756223b38b4f67ad2e1ba59885193760d56475e69c62390cc9a86725182a5"
+    sha256 arm64_big_sur: "56592846f55be4fe0f78cc66e1be0d50b3e7053288c7eac1c9de6b709b51ac15"
+    sha256 big_sur:       "5e92c79a7489764634c5fd34ee79f6a770accd64b22a618577638916379d098d"
+    sha256 catalina:      "919aadadaae1bb3f1519b328cc6387dcf890192c64ee0cfe1373b4d04a5f7e99"
+    sha256 mojave:        "b86cc4374ea7dbb3e08bcc64b8964e70b4f9a43c13c40b8ce47bac26ebb6cd34"
+    sha256 x86_64_linux:  "1d4ebe7e3d5d92f4050cb748f2c7e2e24ebab198faaa85a309e132cf6041a8f7"
   end
 
   depends_on "openssl@1.1"
@@ -35,7 +27,7 @@ class Zabbix < Formula
       --with-openssl=#{Formula["openssl@1.1"].opt_prefix}
     ]
 
-    on_macos do
+    if OS.mac?
       sdk = MacOS::CLT.installed? ? "" : MacOS.sdk_path
       args << "--with-iconv=#{sdk}/usr"
     end

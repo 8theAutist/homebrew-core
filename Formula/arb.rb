@@ -1,17 +1,17 @@
 class Arb < Formula
   desc "C library for arbitrary-precision interval arithmetic"
   homepage "https://arblib.org"
-  url "https://github.com/fredrik-johansson/arb/archive/2.19.0.tar.gz"
-  sha256 "0aec6b492b6e9a543bdb3287a91f976951e2ba74fd4de942e692e21f7edbcf13"
+  url "https://github.com/fredrik-johansson/arb/archive/2.21.0.tar.gz"
+  sha256 "6493ebcfb1772458db4ca66da4c5536968484a3815cf75d2bb33c600b4471910"
   license "LGPL-2.1-or-later"
-  revision 1
-  head "https://github.com/fredrik-johansson/arb.git"
+  head "https://github.com/fredrik-johansson/arb.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "d18804a179a6ea97014edb435487532e308fd3418250b0de06306e810c10e863"
-    sha256 cellar: :any, big_sur:       "0e09a51868eb29ac963d7a05de8d69582b84fcaa0daeda65d36a4836b3e8ce7a"
-    sha256 cellar: :any, catalina:      "735bd3b8dc3f89429d51b1fed7b0a651176d2816402eb5c88b7e7a33709d723f"
-    sha256 cellar: :any, mojave:        "e2001e15a3cab1166c517a366269ad88258748cd8373253f071450d433c7f8cb"
+    sha256 cellar: :any,                 arm64_big_sur: "129c293ccf5fe95ea73b8108d253b5e786c627817a435d4d5cf1c300e1727110"
+    sha256 cellar: :any,                 big_sur:       "7f66b6ea8c88e6b97134158c5f4e27627acfc397c8a25ca9775c4cd6253a1ec2"
+    sha256 cellar: :any,                 catalina:      "14516678a24171a98ca03ede69ee3d1cca3e25edca749ffb0a4c427d67cf9870"
+    sha256 cellar: :any,                 mojave:        "8bd4187fb3e0747a0ff29b2e102fb511753e8dfb25990ce7edda4f900be8e947"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "592a516186f1fe3af497a648284af29879bfd54f1e6b23865d70ded29241c1bd"
   end
 
   depends_on "cmake" => :build

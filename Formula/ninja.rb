@@ -4,29 +4,35 @@ class Ninja < Formula
   url "https://github.com/ninja-build/ninja/archive/v1.10.2.tar.gz"
   sha256 "ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed"
   license "Apache-2.0"
-  head "https://github.com/ninja-build/ninja.git"
+  head "https://github.com/ninja-build/ninja.git", branch: "master"
 
   livecheck do
     url :stable
-    strategy :github_latest
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
   bottle do
-    sha256 arm64_big_sur: "8be5a50d0bfe6bae6f920def1273bc0da888a5eef7304303888b1a5929bd517e"
-    sha256 big_sur:       "e5e8174fb4bce324cfb42226d46ce1433f34866f0c06ce930a3bbdb40cadd395"
-    sha256 catalina:      "5eb553057f7595f0c607b100ac263ab5834a057b11e8aca512555f5129f6d544"
-    sha256 mojave:        "8d7775944ef67e3f8884bff5ea0013a80c4811be8c268fdd9b37cc377eb9ec1b"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "2ba394fee0825079adf179dfaebd6d38ac3e4918d851f3e844b52bdd6a97b12b"
+    sha256 cellar: :any_skip_relocation, big_sur:       "a024937b955212892b810dbe09af351b8966448cab497db3d81cd6ca829cd8ec"
+    sha256 cellar: :any_skip_relocation, catalina:      "07ce960dd5c57859916a09090ef9b747a28c56892d60cc91c29b85c8cc13d902"
+    sha256 cellar: :any_skip_relocation, mojave:        "b9c82b12477142c1a4ed7d030d9227b6c351fbe7747f3533e37607e5497db22b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f8668b179edcaf6f918dbd83aea05c421015c46c546a9b0744b5c723a2737d55"
   end
 
-  depends_on "python@3.9"
+  # Ninja only needs Python for some non-core functionality.
+  depends_on "python@3.9" => [:build, :test]
 
   def install
     py = Formula["python@3.9"].opt_bin/"python3"
-    system py, "./configure.py", "--bootstrap", "--verbose", "--with-python=#{py}"
+    system py, "./configure.py", "--bootstrap", "--verbose", "--with-python=python3"
 
     bin.install "ninja"
     bash_completion.install "misc/bash-completion" => "ninja-completion.sh"
     zsh_completion.install "misc/zsh-completion" => "_ninja"
+    doc.install "doc/manual.asciidoc"
+    elisp.install "misc/ninja-mode.el"
+    (share/"vim/vimfiles/syntax").install "misc/ninja.vim"
   end
 
   test do

@@ -2,31 +2,37 @@ class Cbmc < Formula
   desc "C Bounded Model Checker"
   homepage "https://www.cprover.org/cbmc/"
   url "https://github.com/diffblue/cbmc.git",
-      tag:      "cbmc-5.28.1",
-      revision: "48893287099cb5780302fe9dc415eb6888354fd6"
+      tag:      "cbmc-5.41.0",
+      revision: "a76195a1437e83bdfec3df46aa738ddde4d86ad2"
   license "BSD-4-Clause"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "1e85520c5bf0e87e7d24ae58916dc715921a52eeab702f1ba27a1e31a2e12fbf"
-    sha256 cellar: :any_skip_relocation, catalina: "fbb1fdc9035e6f752f4663d5f8192b1987cc47024f80bb1ab4710adc890c5219"
-    sha256 cellar: :any_skip_relocation, mojave:   "d3e922e9fe4d8b653bf4ece75d388f919908388ae55df8acb2923618c4caed05"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "095f242cf7236399d0d7818b1e0b259c696449bf529fb1d8ba9647490d00b8e4"
+    sha256 cellar: :any_skip_relocation, big_sur:       "99e2c8d8b7ea9541ba9ad79c99b2c82aa8a74c1f5ef4509f16d3b217513dc87a"
+    sha256 cellar: :any_skip_relocation, catalina:      "8fb7438030905bd3af84b626639c17a8256a9d5606845a9b0c3dba36eff2a9ea"
+    sha256 cellar: :any_skip_relocation, mojave:        "38b0dda92c87434eb32643bf9226b7be76113c894df89f08a2f83965d702f1fc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbbf864c8fd36d0c45f3deacc0a0bac9e38b823e8bba9629e17cdc48a0987880"
   end
 
   depends_on "cmake" => :build
   depends_on "maven" => :build
   depends_on "openjdk" => :build
 
+  uses_from_macos "bison" => :build
+  uses_from_macos "flex" => :build
+
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
+
   def install
-    args = std_cmake_args + %w[
-      -DCMAKE_C_COMPILER=/usr/bin/clang
-    ]
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
-    mkdir "build" do
-      system "cmake", "..", *args
-      system "cmake", "--build", "."
-      system "make", "install"
-    end
-
+    # lib contains only `jar` files
     libexec.install lib
   end
 

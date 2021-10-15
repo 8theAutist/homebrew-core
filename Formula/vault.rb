@@ -5,10 +5,10 @@ class Vault < Formula
   desc "Secures, stores, and tightly controls access to secrets"
   homepage "https://vaultproject.io/"
   url "https://github.com/hashicorp/vault.git",
-      tag:      "v1.7.1",
-      revision: "917142287996a005cb1ed9d96d00d06a0590e44e"
+      tag:      "v1.8.4",
+      revision: "925bc650ad1d997e84fbb832f302a6bfe0105bbb"
   license "MPL-2.0"
-  head "https://github.com/hashicorp/vault.git"
+  head "https://github.com/hashicorp/vault.git", branch: "main"
 
   livecheck do
     url "https://releases.hashicorp.com/vault/"
@@ -16,15 +16,24 @@ class Vault < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "7e862ac177b6c07ef61532f721d8ca5a2f4ac61ed9321ec0555d1967e00bc9ac"
-    sha256 cellar: :any_skip_relocation, catalina: "d5c7f4c1ce2911fcdc1c310ffe1471f349eb5706529cc0ae03b40ad9c39ac93b"
-    sha256 cellar: :any_skip_relocation, mojave:   "b4279befa1452220235ef77cf875cf69546941163187302471136838db07e478"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "15d1d63cc1e6028d4ea4284517354c17dad4348b91b99c468311ac86ac682796"
+    sha256 cellar: :any_skip_relocation, big_sur:       "61f7b7a0042e66afc38be2bb3a892c93674e38d6b33de8e4f88f7b48c4bfdfbe"
+    sha256 cellar: :any_skip_relocation, catalina:      "2316c2d94d761c6928e67b28c122fb9175943f965cb389d2735edcb61bc3e904"
+    sha256 cellar: :any_skip_relocation, mojave:        "38c70bfa12f622a9a7ad27d8b63b50b56dad4729b4b67a88109d7941d84f3982"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ade90a215435e4fb81baca40756f4b9c9edb02f3f31365340956e12278956356"
   end
 
   depends_on "go" => :build
   depends_on "gox" => :build
-  depends_on "node@10" => :build
+  # Cannot build with `node` while upstream depends on node-sass<6
+  depends_on "node@14" => :build
   depends_on "yarn" => :build
+
+  # remove in next release
+  patch do
+    url "https://github.com/hashicorp/vault/commit/b368a675955707db4e940da29a1043871a3781b6.patch?full_index=1"
+    sha256 "3595f5a6e3d3f73dfa0db6886f430a0ae5cbcc7f5bd5444c3652bc0c426b26f2"
+  end
 
   def install
     ENV.prepend_path "PATH", "#{ENV["GOPATH"]}/bin"
@@ -32,38 +41,12 @@ class Vault < Formula
     bin.install "bin/vault"
   end
 
-  plist_options manual: "vault server -dev"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <dict>
-            <key>SuccessfulExit</key>
-            <false/>
-          </dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/vault</string>
-            <string>server</string>
-            <string>-dev</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/vault.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/vault.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"vault", "server", "-dev"]
+    keep_alive true
+    working_dir var
+    log_path var/"log/vault.log"
+    error_log_path var/"log/vault.log"
   end
 
   test do

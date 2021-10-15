@@ -1,9 +1,9 @@
 class Maven < Formula
   desc "Java-based project management"
   homepage "https://maven.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz"
-  mirror "https://archive.apache.org/dist/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz"
-  sha256 "b98a1905eb554d07427b2e5509ff09bd53e2f1dd7a0afa38384968b113abef02"
+  url "https://www.apache.org/dyn/closer.lua?path=maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz"
+  mirror "https://archive.apache.org/dist/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz"
+  sha256 "0f1597d11085b8fe93d84652a18c6deea71ece9fabba45a02cf6600c7758fd5b"
   license "Apache-2.0"
 
   livecheck do
@@ -11,7 +11,13 @@ class Maven < Formula
     regex(/href=.*?apache-maven[._-]v?(\d+(?:\.\d+)+)-bin\.t/i)
   end
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d5316ed4579d366299cad35d57376413ef5942be27e9def61967b417468b8e2d"
+    sha256 cellar: :any_skip_relocation, big_sur:       "e20b223a764265a88cd00a3a526fcafdda834a038dccfef6ad63d551dd6d5594"
+    sha256 cellar: :any_skip_relocation, catalina:      "e20b223a764265a88cd00a3a526fcafdda834a038dccfef6ad63d551dd6d5594"
+    sha256 cellar: :any_skip_relocation, mojave:        "e20b223a764265a88cd00a3a526fcafdda834a038dccfef6ad63d551dd6d5594"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "07797e93cf8c6f358b149d6bfc31da7b65b469d2585b2efaa7ce36741bc1887f"
+  end
 
   depends_on "openjdk"
 

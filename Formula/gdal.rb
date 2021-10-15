@@ -1,8 +1,8 @@
 class Gdal < Formula
   desc "Geospatial Data Abstraction Library"
   homepage "https://www.gdal.org/"
-  url "https://download.osgeo.org/gdal/3.2.2/gdal-3.2.2.tar.xz"
-  sha256 "a7e1e414e5c405af48982bf4724a3da64a05770254f2ce8affb5f58a7604ca57"
+  url "https://download.osgeo.org/gdal/3.3.2/gdal-3.3.2.tar.xz"
+  sha256 "630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3"
   license "MIT"
   revision 3
 
@@ -12,10 +12,11 @@ class Gdal < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "b86d4ee068a0a8458202dcf37a615cc5768f6d242fe77e9f2ade49bc1bf5f0fb"
-    sha256 big_sur:       "2817e26690d3ebcf26eb676402bb87f57008530ed54a611d822e45b50fa0f1b4"
-    sha256 catalina:      "17e65669d3c233e37412c011c28a8a5d89b5f3fc8d6f7e77be3033abfb002326"
-    sha256 mojave:        "c25de11ffe9b4b4ffe0ec5d030db57a8a163867808418fae0c7584048bd589a4"
+    sha256 arm64_big_sur: "ec5a0e91c09eab98f8bd0196abfb4d25ae1ba5f36517f6159caef0a89cb99f52"
+    sha256 big_sur:       "37251c904a4e4377c7ee5be304e96b616306a223fe9fde09ee643172348bc2cf"
+    sha256 catalina:      "f0924428cee9dd28897ad594c55b8d1646194aa52e2d00b99200589dc61eac4d"
+    sha256 mojave:        "7b8ea1eeef50309b0c43086bfaa20dec57e505214d1e464c9062d8f727a5378d"
+    sha256 x86_64_linux:  "09110d7d9754270df1ed263910f9f1bfa5c33c44b25b6e856ab1439fa91f7c08"
   end
 
   head do
@@ -24,7 +25,6 @@ class Gdal < Formula
   end
 
   depends_on "pkg-config" => :build
-
   depends_on "cfitsio"
   depends_on "epsilon"
   depends_on "expat"
@@ -45,8 +45,8 @@ class Gdal < Formula
   depends_on "numpy"
   depends_on "openjpeg"
   depends_on "pcre"
-  depends_on "poppler"
-  depends_on "proj"
+  depends_on "poppler-qt5"
+  depends_on "proj@7"
   depends_on "python@3.9"
   depends_on "sqlite" # To ensure compatibility with SpatiaLite
   depends_on "unixodbc" # macOS version is not complete enough
@@ -58,10 +58,20 @@ class Gdal < Formula
   uses_from_macos "curl"
 
   on_linux do
-    depends_on "bash-completion"
+    depends_on "util-linux"
+    depends_on "gcc"
   end
 
+  conflicts_with "avce00", because: "both install a cpl_conv.h header"
   conflicts_with "cpl", because: "both install cpl_error.h"
+
+  fails_with gcc: "5"
+
+  # Fix build with Poppler 21.10+
+  patch :p2 do
+    url "https://github.com/OSGeo/gdal/commit/9c09870e374ca21d558101af3f4c09a6164fdfc3.patch?full_index=1"
+    sha256 "b633210796bf07bc7a98f55e80045fbaeeef77781c0a801831fa52c69576f420"
+  end
 
   def install
     args = [
@@ -71,7 +81,6 @@ class Gdal < Formula
       "--disable-debug",
       "--with-libtool",
       "--with-local=#{prefix}",
-      "--with-opencl",
       "--with-threads",
 
       # GDAL native backends
@@ -92,7 +101,7 @@ class Gdal < Formula
       "--with-png=#{Formula["libpng"].opt_prefix}",
       "--with-spatialite=#{Formula["libspatialite"].opt_prefix}",
       "--with-sqlite3=#{Formula["sqlite"].opt_prefix}",
-      "--with-proj=#{Formula["proj"].opt_prefix}",
+      "--with-proj=#{Formula["proj@7"].opt_prefix}",
       "--with-zstd=#{Formula["zstd"].opt_prefix}",
       "--with-liblzma=yes",
       "--with-cfitsio=#{Formula["cfitsio"].opt_prefix}",
@@ -141,11 +150,16 @@ class Gdal < Formula
       "--without-sosi",
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--with-curl=/usr/bin/curl-config"
-    end
-    on_linux do
+      args << "--with-opencl"
+    else
       args << "--with-curl=#{Formula["curl"].opt_bin}/curl-config"
+
+      # The python build needs libgdal.so, which is located in .libs
+      ENV.append "LDFLAGS", "-L#{buildpath}/.libs"
+      # The python build needs gnm headers, which are located in the gnm folder
+      ENV.append "CFLAGS", "-I#{buildpath}/gnm"
     end
 
     system "./configure", *args

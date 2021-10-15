@@ -2,16 +2,17 @@ class Auditbeat < Formula
   desc "Lightweight Shipper for Audit Data"
   homepage "https://www.elastic.co/products/beats/auditbeat"
   url "https://github.com/elastic/beats.git",
-      tag:      "v7.12.0",
-      revision: "08e20483a651ea5ad60115f68ff0e53e6360573a"
+      tag:      "v7.15.0",
+      revision: "9023152025ec6251bc6b6c38009b309157f10f17"
   license "Apache-2.0"
-  head "https://github.com/elastic/beats.git"
+  head "https://github.com/elastic/beats.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d5c9eec5cadb918feb7060b787de3d710002a987f6380ccf547c2c873f0228af"
-    sha256 cellar: :any_skip_relocation, big_sur:       "87e8ff8d3196c611ad6f35ed46127f4cd323f3a588ff5aedc5652aff85caf4a6"
-    sha256 cellar: :any_skip_relocation, catalina:      "95aebf2b0d0d6c4333167b24f1e7d1c8b14afc719a4ed6f9fb35f74589c1afb1"
-    sha256 cellar: :any_skip_relocation, mojave:        "2f9c1efbd1935b5c05b4853e7233d82de2379476f53960a1d814518aeccf4b9c"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "3b59124beec51c8b8279a33db39990217e36724431e8fc09e80c1354765e6ce8"
+    sha256 cellar: :any_skip_relocation, big_sur:       "f4d421946ac70939670eafbdadc016d464d91e465ef245e6186c1e683f1558d5"
+    sha256 cellar: :any_skip_relocation, catalina:      "2ae9bbcf8b58469b17c4dd580a7be624ff4414a4f753d77fb912071b635c6aa5"
+    sha256 cellar: :any_skip_relocation, mojave:        "2ef737537a210c23dff6a0bd91f69b611585daa3616f92f64cf0dc63b3d7959f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "24da865a1679afec991afcf48e96351c2d66ffc860fe017f694a054c49353098"
   end
 
   depends_on "go" => :build
@@ -54,24 +55,8 @@ class Auditbeat < Formula
     (var/"log/auditbeat").mkpath
   end
 
-  plist_options manual: "auditbeat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/auditbeat</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"auditbeat"
   end
 
   test do

@@ -6,13 +6,14 @@ class LiterateGit < Formula
   url "https://github.com/bennorth/literate-git/archive/v0.3.1.tar.gz"
   sha256 "f1dec77584236a5ab2bcee9169e16b5d976e83cd53d279512136bdc90b04940a"
   license "GPL-3.0-or-later"
-  revision 6
+  revision 8
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "331f2b1125935469948fb649b8ac5a8063bcb63e4a7023aa8db3c6ef63a43b31"
-    sha256 cellar: :any, big_sur:       "7cf45d23a0f329ce3a0f4f6dbf714ba2ac6cacdebda0aadecb47cbab3c837296"
-    sha256 cellar: :any, catalina:      "3a9b77d11ab5cf7c11ca7c68e87facd315892aeb3b4f39eb2e620642bd0cbce4"
-    sha256 cellar: :any, mojave:        "ab1381ddd5dca2639be003b01a67d62a4fe76b1fbf3572859d7b5adaa1e44303"
+    sha256 cellar: :any,                 arm64_big_sur: "20922d79ddd5bf762340ea3691c6ab22cf83af26c7925442ebe10f098d5bbb9a"
+    sha256 cellar: :any,                 big_sur:       "54097a3b483f888c3b74a3c7daedd7ae79a49066e56397c12de7ba0913061f17"
+    sha256 cellar: :any,                 catalina:      "cd7416b4d31ac322771395488d77246bf11945ed4121c9ae4d310f5a03c90831"
+    sha256 cellar: :any,                 mojave:        "3e46e63388b8de0765c764b1c16867f08d0208f74202e97d46199418a15273f7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ce05f326e2c14916b572caec09dd1de8a7f760e2b175078ac9f0ce73fd944e3"
   end
 
   depends_on "libgit2"
@@ -60,8 +61,15 @@ class LiterateGit < Formula
   end
 
   resource "pygit2" do
-    url "https://files.pythonhosted.org/packages/3a/42/f69de8c7a1e33f365a91fa39093f4e7a64609c2bd127203536edc813cbf7/pygit2-1.4.0.tar.gz"
-    sha256 "cbeb38ab1df9b5d8896548a11e63aae8a064763ab5f1eabe4475e6b8a78ee1c8"
+    url "https://files.pythonhosted.org/packages/6b/23/a8c5b726a58282fe2cadcc63faaddd4be147c3c8e0bd38b233114adf98fd/pygit2-1.6.1.tar.gz"
+    sha256 "c3303776f774d3e0115c1c4f6e1fc35470d15f113a7ae9401a0b90acfa1661ac"
+
+    # libgit2 1.3 support
+    # https://github.com/libgit2/pygit2/pull/1089
+    patch do
+      url "https://raw.githubusercontent.com/Homebrew/formula-patches/54d3a0d1f241fdd4e9229312ced0d8da85d964b1/pygit2/libgit2-1.3.0.patch"
+      sha256 "4d501c09d6642d50d89a1a4d691980e3a4a2ebcb6de7b45d22cce16a451b9839"
+    end
   end
 
   resource "Pygments" do

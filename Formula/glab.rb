@@ -1,21 +1,24 @@
 class Glab < Formula
   desc "Open-source GitLab command-line tool"
   homepage "https://glab.readthedocs.io/"
-  url "https://github.com/profclems/glab/archive/v1.16.0.tar.gz"
-  sha256 "eac7ac0dae3b709aea7c7eaa578d09b8f101e590f1c2d83c66926afa233993b0"
+  url "https://github.com/profclems/glab/archive/v1.21.1.tar.gz"
+  sha256 "878c13d064ca6010437de90ca3711962fd87441fcae39bf01cb0af5aa5efd79e"
   license "MIT"
-  head "https://github.com/profclems/glab.git"
+  head "https://github.com/profclems/glab.git", branch: "trunk"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "747b4542cac6c9b832c4a43a279b1f9219ba5834a0c8f8e7cd5ac5656152a4c6"
-    sha256 cellar: :any_skip_relocation, big_sur:       "942b9de81ad865c128eeb857abc862632bb676caf296589849403d2b1a90e601"
-    sha256 cellar: :any_skip_relocation, catalina:      "2d3a42f75e3d788c1699d487e06fda6bb207261d7c4629bd6a00042ceb3792f1"
-    sha256 cellar: :any_skip_relocation, mojave:        "71d98335b86d79b40580a4c14c27bda6a4fd4abf4e7fbc1fee0c5d1f236cda1e"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c1a989fc60ce6bf9071350d9ce9d48d59858e490d92cb23fed6c979ea3a4dfc8"
+    sha256 cellar: :any_skip_relocation, big_sur:       "82a903f4d6f4866fa55c93250d63467c8f83003389343cec63e8bc70e0e9dc5e"
+    sha256 cellar: :any_skip_relocation, catalina:      "766192bb22eba3e0219aae40b4898d4e0993788154a5885d865ae1e6074ac722"
+    sha256 cellar: :any_skip_relocation, mojave:        "60e7f1b0149b2c767b3324bed1719b573db47db3120250c9c596a372a639a06a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6c2494a7790d8b3a0391842bc0b70b645a459630a264501becb96d893420768e"
   end
 
   depends_on "go" => :build
 
   def install
+    ENV["CGO_ENABLED"] = "1" if OS.mac?
+
     system "make", "GLAB_VERSION=#{version}"
     bin.install "bin/glab"
     (bash_completion/"glab").write Utils.safe_popen_read(bin/"glab", "completion", "--shell=bash")

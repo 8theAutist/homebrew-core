@@ -3,24 +3,24 @@ class Sip < Formula
 
   desc "Tool to create Python bindings for C and C++ libraries"
   homepage "https://www.riverbankcomputing.com/software/sip/intro"
-  url "https://files.pythonhosted.org/packages/76/d9/5e1048d2f2fa6714e0d76382810b0fa81400c40e25b1f4f46c1a82e48364/sip-6.0.3.tar.gz"
-  sha256 "929e3515428ea962003ccf6795244a5fe4fa6e2c94dc9ab8cb2c58fcd368c34c"
+  url "https://files.pythonhosted.org/packages/ed/74/57851ed1cd8d996bbb3103b17798d59ddda3f7f8245b826c01aadfc3d66c/sip-6.3.1.tar.gz"
+  sha256 "2f9cd6ce0e19226d53d62ad6ba81a62f624626f14924724eab2a23390d4dc684"
   license any_of: ["GPL-2.0-only", "GPL-3.0-only"]
-  revision 1
   head "https://www.riverbankcomputing.com/hg/sip", using: :hg
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7d014c77da8de72d9e329e3c1128a8f0efa031eabe8c4b8cb921935e35d724de"
-    sha256 cellar: :any_skip_relocation, big_sur:       "a837368bc4d0e64107acb61b064bc27c1635beadd2cc2ddd12c0802624a81fb2"
-    sha256 cellar: :any_skip_relocation, catalina:      "dcad44f2a371e168ea960b42e91b745afb2f36a7199644830e37d128af4fecfc"
-    sha256 cellar: :any_skip_relocation, mojave:        "8a9516100d8af37bae956d3e3c5495b66504f1098acefa7906aa75662b5ace89"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "933b936d56d79aa7f1f044f0b7cfc53b61fbbba541243bf73d76c1308040fdfc"
+    sha256 cellar: :any_skip_relocation, big_sur:       "78d4beda8f0e902311c19eace9723a805d37aa978053b20198bfc29b2fb43e17"
+    sha256 cellar: :any_skip_relocation, catalina:      "7fdf440cd1060a7a58c686dd7568d9984c9950abd7eb52ac5585badcf878e97d"
+    sha256 cellar: :any_skip_relocation, mojave:        "d34a94def987327458aabd27b6c10dee5efb165f51355ba9987ecf94c80e559b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "03835651221c839d3139c3a67c762985517e10b48da714c69ac4936d3d5e40a1"
   end
 
   depends_on "python@3.9"
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/86/3c/bcd09ec5df7123abcf695009221a52f90438d877a2f1499453c6938f5728/packaging-20.9.tar.gz"
-    sha256 "5b327ac1320dc863dca72f4514ecc086f31186744b84a230374cc1fd776feae5"
+    url "https://files.pythonhosted.org/packages/df/86/aef78bab3afd461faecf9955a6501c4999933a48394e90f03cd512aad844/packaging-21.0.tar.gz"
+    sha256 "7dc96269f53a4ccec5c0670940a4281106dd0bb343f47b7471f779df49c2fbe7"
   end
 
   resource "pyparsing" do
@@ -31,18 +31,6 @@ class Sip < Formula
   resource "toml" do
     url "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz"
     sha256 "b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
-  end
-
-  # TODO: remove them after sip 6.1.0
-  # These patch provide the option `--scripts-dir`
-  patch do
-    url "https://www.riverbankcomputing.com/hg/sip/raw-diff/ffd0551c32cc/sipbuild/builder.py"
-    sha256 "2c969dfba2e4b0553d06999a3aa07a93ea4b7ca2cce62635d1418ecdc74a6df2"
-  end
-
-  patch do
-    url "https://www.riverbankcomputing.com/hg/sip/raw-diff/ffd0551c32cc/sipbuild/project.py"
-    sha256 "ea99834ab404583a1a49a05997950758fe95ba473129438117ffa5647028d99a"
   end
 
   def install

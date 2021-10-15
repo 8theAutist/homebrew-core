@@ -1,8 +1,8 @@
 class Nushell < Formula
   desc "Modern shell for the GitHub era"
   homepage "https://www.nushell.sh"
-  url "https://github.com/nushell/nushell/archive/0.30.0.tar.gz"
-  sha256 "a36cd3d93c69aab83c874fe0c8b653ce9fe188da9f527d3bb28492ba213e579a"
+  url "https://github.com/nushell/nushell/archive/0.38.0.tar.gz"
+  sha256 "16e055cf3a2c459128f1c13f7cbe07956bea6d7765ca467cf189248a5d35d9ab"
   license "MIT"
   head "https://github.com/nushell/nushell.git", branch: "main"
 
@@ -13,10 +13,11 @@ class Nushell < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "0c953b0b2680e60ba759340b3ed67c0cfc9c5d2d37537295cf1cb29d1bd51fc3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "3c8b74d01c3bf5c5ebde96351049640dee37e7bd483d63943902d7425df7ad12"
-    sha256 cellar: :any_skip_relocation, catalina:      "1f270e4152e65cbf75832d22fc4edec5dd6564cbfaa6e1d1ba13e25b3cccd8e0"
-    sha256 cellar: :any_skip_relocation, mojave:        "4e0ee5c708926fe52a75d1cc636ad06fc278ca735919db749b17fcc2ae011bad"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "2a796edf89e3d797011b563c0baa0a2543b075c33f443013c8176dc4ca589ad9"
+    sha256 cellar: :any_skip_relocation, big_sur:       "80065a2146aa4f06624075bee0b259a1509acc3b928fdbfcf3de092e4e12eeb8"
+    sha256 cellar: :any_skip_relocation, catalina:      "6afb1b8223142a72b143c9012c61d20f7f8b7992cb010cb512c07592b1f535b8"
+    sha256 cellar: :any_skip_relocation, mojave:        "b710a1108d8e391750350918b60cae0e1f41c84fcf90c7c3720af180451a4e1c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "35defe65118ff689983daff51b6e6953a814da30335e614077bcbabb09864db6"
   end
 
   depends_on "rust" => :build
@@ -26,10 +27,12 @@ class Nushell < Formula
 
   on_linux do
     depends_on "pkg-config" => :build
+    depends_on "libx11"
+    depends_on "libxcb"
   end
 
   def install
-    system "cargo", "install", "--features", "stable", *std_cargo_args
+    system "cargo", "install", "--features", "extra", *std_cargo_args
   end
 
   test do

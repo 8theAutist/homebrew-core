@@ -1,9 +1,9 @@
 class Libedit < Formula
   desc "BSD-style licensed readline alternative"
   homepage "https://thrysoee.dk/editline/"
-  url "https://thrysoee.dk/editline/libedit-20210419-3.1.tar.gz"
-  version "20210419-3.1"
-  sha256 "571ebe44b74860823e24a08cf04086ff104fd7dfa1020abf26c52543134f5602"
+  url "https://thrysoee.dk/editline/libedit-20210910-3.1.tar.gz"
+  version "20210910-3.1"
+  sha256 "6792a6a992050762edcca28ff3318cdb7de37dccf7bc30db59fcd7017eed13c5"
   license "BSD-3-Clause"
 
   livecheck do
@@ -12,10 +12,11 @@ class Libedit < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "04ed7ad171dc9522e9a9b0d163e816f9de98837ffd71ac800906ecbc23ad6398"
-    sha256 cellar: :any, big_sur:       "f648687d7d1328cd16d926425956bfb6617ba0212d7705d1a75e75c572cdac26"
-    sha256 cellar: :any, catalina:      "5e65d63c667262319f8bca0613d42189a3cece68e753c9cbe44b17c8f3719d19"
-    sha256 cellar: :any, mojave:        "432a7d0cfb00ded9d02e2da8861a5d69294c2c9b98e89e849b9a9d86310239f9"
+    sha256 cellar: :any,                 arm64_big_sur: "87f49ccb584888cb95885c09a586ec0d97f7d3813cdc38f66e07690143226583"
+    sha256 cellar: :any,                 big_sur:       "f1c631b30d1daf17da2bdd3d1f59330d99439ff15dd573e52364bc014a664803"
+    sha256 cellar: :any,                 catalina:      "38e6ae9c4fd560bc93003106a786fac1e26749426b837e8f92fb38b547b0edb7"
+    sha256 cellar: :any,                 mojave:        "44e7ce6ef6d1f558f565d03e4287d6da98a36e120b736a083d5c751669fdb7c1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0bdbd74d04e366389621c1951d0a1de06a359c19da5c2c5b847605bca617753"
   end
 
   keg_only :provided_by_macos
@@ -28,7 +29,7 @@ class Libedit < Formula
                           "--prefix=#{prefix}"
     system "make", "install"
 
-    on_linux do
+    if OS.linux?
       # Conflicts with readline.
       mv man3/"history.3", man3/"history_libedit.3"
     end

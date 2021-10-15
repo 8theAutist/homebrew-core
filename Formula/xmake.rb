@@ -1,16 +1,17 @@
 class Xmake < Formula
   desc "Cross-platform build utility based on Lua"
   homepage "https://xmake.io/"
-  url "https://github.com/xmake-io/xmake/releases/download/v2.5.3/xmake-v2.5.3.tar.gz"
-  sha256 "337edd61de22b043720556a02bf7b1c4d4881e200ecce6bb2406d0442f2db92e"
+  url "https://github.com/xmake-io/xmake/releases/download/v2.5.8/xmake-v2.5.8.tar.gz"
+  sha256 "9f0eaa823ff4d0fab5b52e01b62f6db860a2ed32402ab51738903a07584c91cb"
   license "Apache-2.0"
-  head "https://github.com/xmake-io/xmake.git"
+  head "https://github.com/xmake-io/xmake.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "220d389fc2514cf862d5195fe9b234357f9b74bd7691023cead693ec5b010e28"
-    sha256 cellar: :any_skip_relocation, big_sur:       "56f270578493cd53be4f1bb37ecd6b030036934b6400a9c75ca46f785f9f543d"
-    sha256 cellar: :any_skip_relocation, catalina:      "c4625a7aa1b407e59947dab90b540430c3064794a9ccc37ba0668715c6909cc2"
-    sha256 cellar: :any_skip_relocation, mojave:        "204c820e69cdde9cf5ec6168b3fc1a4f3f58bc07d5f8d709b6a213de6bd3f43b"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "90b63301078c6c9108acf749ebd791cde422a27a4eec32408dcbb4fb15c03d7e"
+    sha256 cellar: :any_skip_relocation, big_sur:       "ad540f2a7efeb396a3236c074877401b72e8b49aea70e8bcf420ac1d87db5b26"
+    sha256 cellar: :any_skip_relocation, catalina:      "7d5d1d19cb34c212319f0f742be4f76fa5bd7c1c4475a4c299dba3f2550d40d5"
+    sha256 cellar: :any_skip_relocation, mojave:        "62071446891eaa516a884653279610fdc555d0f3a68106186fb13c3d7ce59db4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ec70d374423b44e0a1948e4e6d2f1a8f33174b06664990c5020764b1c0d0cdc8"
   end
 
   on_linux do
@@ -18,9 +19,7 @@ class Xmake < Formula
   end
 
   def install
-    on_linux do
-      ENV["XMAKE_ROOT"] = "y" if ENV["HOMEBREW_GITHUB_ACTIONS"]
-    end
+    ENV["XMAKE_ROOT"] = "y" if OS.linux? && ENV["HOMEBREW_GITHUB_ACTIONS"]
 
     system "make"
     system "make", "install", "prefix=#{prefix}"

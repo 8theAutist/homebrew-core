@@ -1,15 +1,16 @@
 class CloudflareWrangler < Formula
   desc "CLI tool for Cloudflare Workers"
   homepage "https://github.com/cloudflare/wrangler"
-  url "https://github.com/cloudflare/wrangler/archive/v1.16.0.tar.gz"
-  sha256 "77447a9bb8d37760d257787f9559a7824cab193841eef33baea29766330b52a3"
+  url "https://github.com/cloudflare/wrangler/archive/v1.19.3.tar.gz"
+  sha256 "0e1a598c362564395f53d91a1b6225881e55492c3df554475d7d0dbc2a4db06d"
   license any_of: ["Apache-2.0", "MIT"]
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "0bf41e090f74d5bebe0b63f6b889a326e3dd9008ac0504f1d4c61c508eb9d30e"
-    sha256 cellar: :any_skip_relocation, big_sur:       "c6d63bb03be8fba558ac98d2ffcd00987ee5b92d2434bad1d74a751e81d6d3fc"
-    sha256 cellar: :any_skip_relocation, catalina:      "1ed666be87d30513c032ede0c3208184cd0e4af724962198566a678d43fb883e"
-    sha256 cellar: :any_skip_relocation, mojave:        "e50fdb5dfb6d9efab153ba20a831230ade641c27954151364aa74d9b82c336f4"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "fd4f8cb1b47941301023218fb1426ea3d9310ff2e50ae57b1cd7f4ad6a897183"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2ee3260b0bae182e891d0dc6e4a061d9173d870f9bec1f428277a574248364fa"
+    sha256 cellar: :any_skip_relocation, catalina:      "2687bd15305fb01d7e27bfcf04968893033662da7496630246cdd727d8c18585"
+    sha256 cellar: :any_skip_relocation, mojave:        "247cb94e3eea2f7da5f334dedb0de1bd690097c87ea27b385d0d441860650caa"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3fe8f17ead54b92b365ce717e8f0d7b1c6d54b18a6d4fb5d3be0eebc6a5cfa75"
   end
 
   depends_on "rust" => :build
@@ -20,6 +21,6 @@ class CloudflareWrangler < Formula
 
   test do
     output = shell_output("CF_API_TOKEN=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA #{bin}/wrangler whoami 2>&1", 1)
-    assert_match(/Code 9109: (?:Invalid access token|Max auth failures reached)/, output)
+    assert_match "Failed to retrieve information about the email associated with", output
   end
 end

@@ -1,21 +1,23 @@
 class Buildifier < Formula
   desc "Format bazel BUILD files with a standard convention"
   homepage "https://github.com/bazelbuild/buildtools"
-  url "https://github.com/bazelbuild/buildtools/archive/4.0.1.tar.gz"
-  sha256 "c28eef4d30ba1a195c6837acf6c75a4034981f5b4002dda3c5aa6e48ce023cf1"
+  url "https://github.com/bazelbuild/buildtools/archive/4.2.2.tar.gz"
+  sha256 "ae34c344514e08c23e90da0e2d6cb700fcd28e80c02e23e4d5715dddcb42f7b3"
   license "Apache-2.0"
+  head "https://github.com/bazelbuild/buildtools.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "e4e94523c894ce25eb78ca146d6b5381d6a410688a4830e646003cbad414d5ad"
-    sha256 cellar: :any_skip_relocation, big_sur:       "dfec354e37e8027cfc1adbccd17d88e8ea4781d5653389534fbfb802b71d42d7"
-    sha256 cellar: :any_skip_relocation, catalina:      "105cd56c1b0933b8f2afbe283df6a03f7bc038b8b20daa194e5b6e7fc3ed9e6c"
-    sha256 cellar: :any_skip_relocation, mojave:        "7898e9f197210a0bb89f8674d07da5160d77790f7cf58507c47718d332214948"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "30cc17e7dbbdb450b5b7c914bbe77635c99c6bd0cc106b2796233c085787c525"
+    sha256 cellar: :any_skip_relocation, big_sur:       "9f6f2318368bb64129a35dbdb151b215f6e426fedcca5c17d02f633dd147b45a"
+    sha256 cellar: :any_skip_relocation, catalina:      "9f6f2318368bb64129a35dbdb151b215f6e426fedcca5c17d02f633dd147b45a"
+    sha256 cellar: :any_skip_relocation, mojave:        "9f6f2318368bb64129a35dbdb151b215f6e426fedcca5c17d02f633dd147b45a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "678334bdc3881c60385393786c18f2e7dbe1871f27f1532be9b50bc09ddc2e69"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "./buildifier"
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./buildifier"
   end
 
   test do

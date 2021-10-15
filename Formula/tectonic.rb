@@ -1,10 +1,9 @@
 class Tectonic < Formula
   desc "Modernized, complete, self-contained TeX/LaTeX engine"
   homepage "https://tectonic-typesetting.github.io/"
-  url "https://github.com/tectonic-typesetting/tectonic/archive/tectonic@0.4.1.tar.gz"
-  sha256 "5a2c910f822d59ddaf9d32a0e5f7f34ce30f44e4129513b3a0c50425cf48ac8f"
+  url "https://github.com/tectonic-typesetting/tectonic/archive/tectonic@0.8.0.tar.gz"
+  sha256 "794cf34aee017b8a4288ed509a4e9d550a36aadc2bc0d35b1727d1135dac8e02"
   license "MIT"
-  revision 2
 
   # As of writing, only the tags starting with `tectonic@` are release versions.
   # NOTE: The `GithubLatest` strategy cannot be used here because the "latest"
@@ -15,10 +14,11 @@ class Tectonic < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "f4c9848b087634dc44e65c279704735867c8cd9ceeaf1b223db5eb86d016931b"
-    sha256 cellar: :any, big_sur:       "6e813d832a36c1bd5cbe050671195898c95b3c34693d7475335d01558ca99586"
-    sha256 cellar: :any, catalina:      "3219998fb7f3cb1b9aeb56f28c2261259166356e6cf5a84224253edc442cc7cd"
-    sha256 cellar: :any, mojave:        "ee346b94c8386bb0fe34983c55152761856ab695061f6d21d762a9b9fae8dcd3"
+    sha256 cellar: :any,                 arm64_big_sur: "c251b3e996a3a9bb92b4a3e01967a39a173d15953b24952b045a4bce12f5f5dd"
+    sha256 cellar: :any,                 big_sur:       "f877391f52526e989cee32b8a6424a2c570c51c65f332134fb7fb94d11ede5f4"
+    sha256 cellar: :any,                 catalina:      "90f93c343215ba86c8950e75309dbc241fe88ea25b3679c9c9c810bbc40ed198"
+    sha256 cellar: :any,                 mojave:        "9efcd42f9b38b1d25f4144846ec107b6554be85dad65caf631da2923320be298"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9ce6c644f17c8135cfcd0b83b7ba1d5320aca6d6a3acf1f3c558730c9abdd4c5"
   end
 
   depends_on "pkg-config" => :build
@@ -39,7 +39,7 @@ class Tectonic < Formula
     # https://crates.io/crates/openssl#manual-configuration
     ENV["OPENSSL_DIR"] = Formula["openssl@1.1"].opt_prefix
 
-    system "cargo", "install", *std_cargo_args
+    system "cargo", "install", "--features", "external-harfbuzz", *std_cargo_args
   end
 
   test do

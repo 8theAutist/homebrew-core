@@ -1,8 +1,8 @@
 class Jenkins < Formula
   desc "Extendable open source continuous integration server"
-  homepage "https://jenkins.io/"
-  url "http://mirrors.jenkins.io/war/2.289/jenkins.war"
-  sha256 "9c1cfded502513fa3578070b0c4ca7c4613a78abf1848d5483b0ef02c13427c8"
+  homepage "https://www.jenkins.io/"
+  url "https://get.jenkins.io/war/2.316/jenkins.war"
+  sha256 "4128e1d9ea5a541ba620a8e94a43010694ca11fdefa9881702f934d2c2c0b970"
   license "MIT"
 
   livecheck do
@@ -10,12 +10,18 @@ class Jenkins < Formula
     regex(%r{href=.*?/war/v?(\d+(?:\.\d+)+)/jenkins\.war}i)
   end
 
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "5fd3b48efeafc07c964e66cf970e881b7d78304ef863f7a91f726ab952fef981"
+    sha256 cellar: :any_skip_relocation, big_sur:       "5fd3b48efeafc07c964e66cf970e881b7d78304ef863f7a91f726ab952fef981"
+    sha256 cellar: :any_skip_relocation, catalina:      "5fd3b48efeafc07c964e66cf970e881b7d78304ef863f7a91f726ab952fef981"
+    sha256 cellar: :any_skip_relocation, mojave:        "5fd3b48efeafc07c964e66cf970e881b7d78304ef863f7a91f726ab952fef981"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c47134ef105af8404e42cd867965cf7d630fa3997370d69397b88d45c5f52453"
+  end
+
   head do
     url "https://github.com/jenkinsci/jenkins.git"
     depends_on "maven" => :build
   end
-
-  bottle :unneeded
 
   depends_on "openjdk@11"
 
@@ -36,30 +42,9 @@ class Jenkins < Formula
     EOS
   end
 
-  plist_options manual: "jenkins"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{Formula["openjdk@11"].opt_bin}/java</string>
-            <string>-Dmail.smtp.starttls.enable=true</string>
-            <string>-jar</string>
-            <string>#{opt_libexec}/jenkins.war</string>
-            <string>--httpListenAddress=127.0.0.1</string>
-            <string>--httpPort=8080</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [Formula["openjdk@11"].opt_bin/"java", "-Dmail.smtp.starttls.enable=true", "-jar", opt_libexec/"jenkins.war",
+         "--httpListenAddress=127.0.0.1", "--httpPort=8080"]
   end
 
   test do

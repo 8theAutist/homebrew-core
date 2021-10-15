@@ -1,15 +1,16 @@
 class Seal < Formula
   desc "Easy-to-use homomorphic encryption library"
   homepage "https://github.com/microsoft/SEAL"
-  url "https://github.com/microsoft/SEAL/archive/v3.6.4.tar.gz"
-  sha256 "a0fb90455de357e8647522fcd417d5060ca767bfec2372cda09107852e438205"
+  url "https://github.com/microsoft/SEAL/archive/v3.7.1.tar.gz"
+  sha256 "cdc7426d01f879a8b87204a5df9e01339262d4b53962f6fddc2f34a0dec71777"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "27f72aa08af9d344e5048820d03efdf871fdbf63094219ca233dc9e898a3b886"
-    sha256 cellar: :any, big_sur:       "7d72044decd534df34116f6070c9fd44f93d459abdd7d92a93350737e0a502de"
-    sha256 cellar: :any, catalina:      "4e5a607182ad7dacfb9bf277886ab598d43f53afe47167b00d46259ffe490df3"
-    sha256 cellar: :any, mojave:        "eb720d71a2e94b180da0384648da96dc4babbf25eb521eb2aa30b2a8c5ad1036"
+    sha256 cellar: :any,                 arm64_big_sur: "23beceb2de3f10406360d6dd91ed9aa386e7e94a368c9457918d3581106c2a7b"
+    sha256 cellar: :any,                 big_sur:       "d6c02002668e4a85b55881dceab6d3e8f4b6ee7ee805c008cd0e8e0b5b991434"
+    sha256 cellar: :any,                 catalina:      "e73d859446af694f6914ee025a73d707cbc873ec3bba65e6f25a88850313f3f4"
+    sha256 cellar: :any,                 mojave:        "94cd84ae736c28a2c234333fb90b5c68933a26e60edbb569c8d2fb00326db170"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fc947e560250392fc1a7128849d62cc9d6921e0dea814485ce8c8a1ad0b1061a"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -18,9 +19,15 @@ class Seal < Formula
 
   uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
+
   resource "hexl" do
-    url "https://github.com/intel/hexl/archive/tags/v1.0.1.tar.gz"
-    sha256 "435bc6727a5d54e0b1fca0e2d21ac0fdf5bd8623fbd9015637d01ece931cc602"
+    url "https://github.com/intel/hexl/archive/v1.2.1.tar.gz"
+    sha256 "d09f4bf5309f4fa13f0046475f77e8c5a065d7b9c726eba2d3d943fc13cdae1a"
   end
 
   def install
@@ -88,7 +95,7 @@ class Seal < Formula
       target_link_libraries(sealexamples SEAL::seal_shared)
     EOS
 
-    system "cmake", "examples"
+    system "cmake", "examples", "-DHEXL_DIR=#{lib}/cmake"
     system "make"
     # test examples 1-5 and exit
     input = "1\n2\n3\n4\n5\n0\n"

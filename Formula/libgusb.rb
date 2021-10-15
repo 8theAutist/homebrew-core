@@ -3,16 +3,17 @@ class Libgusb < Formula
 
   desc "GObject wrappers for libusb1"
   homepage "https://github.com/hughsie/libgusb"
-  url "https://people.freedesktop.org/~hughsient/releases/libgusb-0.3.6.tar.xz"
-  sha256 "13277948a2ee06861234938089aea21bce6ad862f14c81a2efa85340ed701efd"
+  url "https://people.freedesktop.org/~hughsient/releases/libgusb-0.3.8.tar.xz"
+  sha256 "6d7092ec4e8e4405e75d4c8799512f2c31cdb0d7a8381ee37d1015a4c4fc8407"
   license "LGPL-2.1-only"
   head "https://github.com/hughsie/libgusb.git"
 
   bottle do
-    sha256 arm64_big_sur: "4345b7a2ea031611554a8610cd77d5a957c08476dca7e3fbf8919f5d33a7108b"
-    sha256 big_sur:       "0dae54cccd585022764e8eceb6dcb9006dead2e0417f056e3f767746e180fbb3"
-    sha256 catalina:      "8a5d3d83ddfeb5fb0bc81aee83bd45a9e80e7fc2f03780c32757e53c4b5c0fe1"
-    sha256 mojave:        "168bdde013b4c4757be1398cadbd0227c788e52766cb418cbf60a79a8806bd7b"
+    sha256 arm64_big_sur: "162c2f8e2aa821917680b9b0dd147ec962c5f5576f41aebeca22a8e62cb89f71"
+    sha256 big_sur:       "cf83dacead41ee2afadd41cbbb536199b32031766aba49fdc8bf39da285749f3"
+    sha256 catalina:      "a61c7235f3c956d25feb3c26c54bbafd09014dc46612055cdc7739c42a7a4ada"
+    sha256 mojave:        "556215c83c9a7b50315e94b654614ad94a874698e9dfd3649f8316797bccbf5e"
+    sha256 x86_64_linux:  "a3df985eab4a9f01478ff634069c4b743a1c3d38a517db9994aee8df11ccb29a"
   end
 
   depends_on "gobject-introspection" => :build
@@ -63,10 +64,12 @@ class Libgusb < Formula
       -lgio-2.0
       -lglib-2.0
       -lgobject-2.0
-      -lintl
       -lusb-1.0
       -lgusb
     ]
+    on_macos do
+      flags << "-lintl"
+    end
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

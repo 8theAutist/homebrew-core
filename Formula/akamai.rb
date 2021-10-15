@@ -1,14 +1,15 @@
 class Akamai < Formula
   desc "CLI toolkit for working with Akamai's APIs"
   homepage "https://github.com/akamai/cli"
-  url "https://github.com/akamai/cli/archive/1.2.0.tar.gz"
-  sha256 "644c722ad7046e99a6e638105cc75ee616c0a5091d9979f8118ef9473f6d7e67"
+  url "https://github.com/akamai/cli/archive/1.3.0.tar.gz"
+  sha256 "338d4be3e5878d52c764bb2e2e5faf5ecaf0510a37c582b3644615df39718141"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "9a8b19117c51afdf3a6ca606ef9adb6d71c0d051b1457ae31ab2869ff60466a3"
-    sha256 cellar: :any_skip_relocation, catalina: "8a2d42ab13b46ecda7be4ce08e2e38d2783089e29077815055e7554a20b987bd"
-    sha256 cellar: :any_skip_relocation, mojave:   "fa326b6b7869e46f087edc41ff1308896dd224dad1f09ba895f3ce459853a5b7"
+    sha256 cellar: :any_skip_relocation, big_sur:      "ae02bff8cd5f22c2d8c083950de16addf0f008c98bdd104aee2ef4d41fbbb0e6"
+    sha256 cellar: :any_skip_relocation, catalina:     "c9873ba7c5c27baa7c9783ce964c5c62d97151c4bd4873d11fae343728d9a245"
+    sha256 cellar: :any_skip_relocation, mojave:       "2287e1ca300d155e500392f5628aa8ad953006b1c263caa35c03e4d9591053a1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "6f587975677c2fc32993c6c4fda1689cff38107fa24b4cdbfee84c7c562ede7f"
   end
 
   depends_on "go" => :build

@@ -1,21 +1,22 @@
 class Rpm < Formula
   desc "Standard unix software packaging tool"
   homepage "https://rpm.org/"
-  url "http://ftp.rpm.org/releases/rpm-4.16.x/rpm-4.16.1.2.tar.bz2"
-  mirror "https://ftp.osuosl.org/pub/rpm/releases/rpm-4.16.x/rpm-4.16.1.2.tar.bz2"
-  sha256 "8357329ceefc92c41687988b22198b26f74a12a9a68ac00728f934a5c4b4cacc"
+  url "http://ftp.rpm.org/releases/rpm-4.17.x/rpm-4.17.0.tar.bz2"
+  mirror "https://ftp.osuosl.org/pub/rpm/releases/rpm-4.17.x/rpm-4.17.0.tar.bz2"
+  sha256 "2e0d220b24749b17810ed181ac1ed005a56bbb6bc8ac429c21f314068dc65e6a"
   license "GPL-2.0-only"
   version_scheme 1
 
   livecheck do
-    url "https://github.com/rpm-software-management/rpm.git"
-    regex(/rpm[._-]v?(\d+(?:\.\d+)+)-release/i)
+    url "https://rpm.org/download.html"
+    regex(/href=.*?rpm[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
-    sha256 big_sur:  "92fc083ce834a3ac5600b1acec267db2877c57d41a22057aa3bd5bc2924e9ac0"
-    sha256 catalina: "a30f423573c7209e08c2d4ec57b4a545c710549e61b300b041f7720c9c600c05"
-    sha256 mojave:   "96d7d9c474f2efb780ec64a28ee112640be8a37af6246f9f2fb01bfd5dc14280"
+    sha256 big_sur:      "6f857111ed59bf5efb8f97ad26c7ed52fb8e70a92d2978dc7d2f6173d14675cd"
+    sha256 catalina:     "29846a4e13dd2683318362442fe7a84c2b7cd71813291be24cc356bc657f8a8d"
+    sha256 mojave:       "aeab2644677216b3d631a4a1abb3d75aada85152f7f85a550ab43943b934f994"
+    sha256 x86_64_linux: "1147c07948c53779fdf751623b349d6da6d6b4753103ce2c898da2cc68a0a041"
   end
 
   depends_on "berkeley-db"
@@ -27,6 +28,7 @@ class Rpm < Formula
   depends_on "openssl@1.1"
   depends_on "pkg-config"
   depends_on "popt"
+  depends_on "sqlite"
   depends_on "xz"
   depends_on "zstd"
 
@@ -61,13 +63,17 @@ class Rpm < Formula
                           "__GIT=/usr/bin/git",
                           "__LD=/usr/bin/ld"
     system "make", "install"
+
+    inreplace lib/"rpm/macros", Superenv.shims_path, "" if OS.mac?
   end
 
   def post_install
     (var/"lib/rpm").mkpath
 
-    # Attempt to fix expected location of GPG to a sane default.
-    inreplace lib/"rpm/macros", "/usr/bin/gpg2", HOMEBREW_PREFIX/"bin/gpg"
+    if OS.mac?
+      # Attempt to fix expected location of GPG to a sane default.
+      inreplace lib/"rpm/macros", "/usr/bin/gpg2", HOMEBREW_PREFIX/"bin/gpg"
+    end
   end
 
   def test_spec
@@ -110,8 +116,8 @@ class Rpm < Formula
     EOS
 
     system "#{bin}/rpm", "-vv", "-qa", "--dbpath=#{testpath}/var/lib/rpm"
-    assert_predicate testpath/"var/lib/rpm/Packages", :exist?,
-                     "Failed to create 'Packages' file!"
+    assert_predicate testpath/"var/lib/rpm/rpmdb.sqlite", :exist?,
+                     "Failed to create 'rpmdb.sqlite' file"
     rpmdir("%_builddir").mkpath
     specfile = rpmdir("%_specdir")+"test.spec"
     specfile.write(test_spec)

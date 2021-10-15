@@ -1,9 +1,13 @@
 class Curl < Formula
   desc "Get a file from an HTTP, HTTPS or FTP server"
   homepage "https://curl.se"
-  url "https://curl.se/download/curl-7.76.1.tar.bz2"
-  sha256 "7a8e184d7d31312c4ebf6a8cb59cd757e61b2b2833a9ed4f9bf708066e7695e9"
+  url "https://curl.se/download/curl-7.79.1.tar.bz2"
+  mirror "https://github.com/curl/curl/releases/download/curl-7_79_1/curl-7.79.1.tar.bz2"
+  mirror "http://fresh-center.net/linux/www/curl-7.79.1.tar.bz2"
+  mirror "http://fresh-center.net/linux/www/legacy/curl-7.79.1.tar.bz2"
+  sha256 "de62c4ab9a9316393962e8b94777a570bb9f71feb580fb4475e412f2f9387851"
   license "curl"
+  revision 1
 
   livecheck do
     url "https://curl.se/download/"
@@ -11,10 +15,11 @@ class Curl < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "d5e39cd979f5db2758087d9fbc3815c3e8f98e348ad6125dd1d6d0ab78752b64"
-    sha256 cellar: :any, big_sur:       "47b216dc054a7de14e08aee5f8a04f787e56e5ddaebc6d0f88749bfafc2d7e7c"
-    sha256 cellar: :any, catalina:      "46342400a65674400880a4ff5085d1170895bcb99b2c3a5067c1802ee343d1bb"
-    sha256 cellar: :any, mojave:        "3a6eb3e2dd53b6b5d3989744f9f422aef0be650ee6cb3b8b735b3f8239281f48"
+    sha256 cellar: :any,                 arm64_big_sur: "fb8bc11a92e6b9c69415ebcc0ac30a69d5fa7399ed48eda8f39acd08fb030f91"
+    sha256 cellar: :any,                 big_sur:       "67eb98cd0d153e0e7ca5aadde8141da15cd6f47990136722e49e4a40b3d53c41"
+    sha256 cellar: :any,                 catalina:      "c623592e8eb8cd9c4e60598f58e9e716b7daea398e75f207c23339624b8f4a71"
+    sha256 cellar: :any,                 mojave:        "097d1eb078e53456d952030e0186eb153a515044336db22da0d7942eba21a7e0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "730a10df5cd6086457c2ed329b0e881c6a8cd70590f5d7e5e731361438b822c3"
   end
 
   head do
@@ -30,9 +35,8 @@ class Curl < Formula
   depends_on "pkg-config" => :build
   depends_on "brotli"
   depends_on "libidn2"
-  depends_on "libmetalink"
+  depends_on "libnghttp2"
   depends_on "libssh2"
-  depends_on "nghttp2"
   depends_on "openldap"
   depends_on "openssl@1.1"
   depends_on "rtmpdump"
@@ -55,20 +59,16 @@ class Curl < Formula
       --with-ca-fallback
       --with-secure-transport
       --with-default-ssl-backend=openssl
-      --with-gssapi
       --with-libidn2
-      --with-libmetalink
       --with-librtmp
       --with-libssh2
       --without-libpsl
     ]
 
-    on_macos do
-      args << "--with-gssapi"
-    end
-
-    on_linux do
-      args << "--with-gssapi=#{Formula["krb5"].opt_prefix}"
+    args << if OS.mac?
+      "--with-gssapi"
+    else
+      "--with-gssapi=#{Formula["krb5"].opt_prefix}"
     end
 
     system "./configure", *args

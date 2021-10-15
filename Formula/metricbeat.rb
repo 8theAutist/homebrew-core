@@ -2,15 +2,17 @@ class Metricbeat < Formula
   desc "Collect metrics from your systems and services"
   homepage "https://www.elastic.co/beats/metricbeat"
   url "https://github.com/elastic/beats.git",
-      tag:      "v7.12.0",
-      revision: "08e20483a651ea5ad60115f68ff0e53e6360573a"
+      tag:      "v7.15.0",
+      revision: "9023152025ec6251bc6b6c38009b309157f10f17"
   license "Apache-2.0"
   head "https://github.com/elastic/beats.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "ae62495115011161159fb26431d1be92b90ed51c490af978d7e977aba08d31ed"
-    sha256 cellar: :any_skip_relocation, catalina: "248eb8cc5133835f395f0d80122d745c2f440b0a95b2c4d7ec8687af4563320b"
-    sha256 cellar: :any_skip_relocation, mojave:   "1a7c43f71cf62ef9c7cc659edc4afe271ca0181024177a60f37637cb78498c99"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "f0f47274e6a9225f42907ce2d4a4c352f38685b3e91217ef0bac0f26ad674934"
+    sha256 cellar: :any_skip_relocation, big_sur:       "294b316138c29b373cb3d7cd6f5416233af362f62a67feea6f6908cf35348f55"
+    sha256 cellar: :any_skip_relocation, catalina:      "c4803fa1e16677e8c510947c3c242d53fee6daff5385f80ed1a77e889fe692ab"
+    sha256 cellar: :any_skip_relocation, mojave:        "9fc0a2f697cf17627c18133e192e20062e4b45ad1ee539829f5bae5e71327ba1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4e1a733de765ab8c0ff6083dcb324f67e80d566177b50173c4f7d8ca3fc33d67"
   end
 
   depends_on "go" => :build
@@ -46,24 +48,8 @@ class Metricbeat < Formula
     EOS
   end
 
-  plist_options manual: "metricbeat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/metricbeat</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"metricbeat"
   end
 
   test do

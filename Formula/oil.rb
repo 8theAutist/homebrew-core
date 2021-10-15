@@ -1,8 +1,8 @@
 class Oil < Formula
   desc "Bash-compatible Unix shell with more consistent syntax and semantics"
   homepage "https://www.oilshell.org/"
-  url "https://www.oilshell.org/download/oil-0.8.8.tar.gz"
-  sha256 "01a67d77b832a7aac4a9f55a682b5336f02359b716cdc45cd565a60e4c987dbc"
+  url "https://www.oilshell.org/download/oil-0.9.3.tar.gz"
+  sha256 "fd96dd339b3b29096e56c930bafd49ccaaae4cf2fd7997f556e7efc78b8845cb"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,16 @@ class Oil < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "e20b14abe68ed567c8c8dbcc56bf2bd9f603b4de00d05d48d0c4918a620b90fd"
-    sha256 big_sur:       "42218a5220582a34f86ff83050ca14c6b149f000c414e588140fffca340a3470"
-    sha256 catalina:      "ecadf5766ba0d9111fdd5e0e91151ae4d3ba7f8527b65e4c772a8a167f1f3fd0"
-    sha256 mojave:        "dd104737645bc99e0e024eca84a1b460de5d39a42a05fafffb5d8e6bd7041b1d"
+    sha256 arm64_big_sur: "88b0b7a6c385518c053cbfdf80fec81265750d25ac9e742b6eac6aaa9d678246"
+    sha256 big_sur:       "20b9de690d6833038f165ecb870df80862e2ee51bce3aee51938b69fb66fa05d"
+    sha256 catalina:      "e4bd8dbcf5a9f183be2bc77f93eed84e8cfaae5b54864122890f1e6d5b26090d"
+    sha256 mojave:        "89ad6d3b4af7cb8ef5517c69c7e6aa2c11c9e01ae2cf7cf25027ec0b7918dc3e"
+    sha256 x86_64_linux:  "7f36287404cee830b84e97f346e7e764bb9a036e203e9387edac04b8855d365a"
   end
 
   depends_on "readline"
+
+  conflicts_with "omake", because: "both install 'osh' binaries"
 
   def install
     system "./configure", "--prefix=#{prefix}",

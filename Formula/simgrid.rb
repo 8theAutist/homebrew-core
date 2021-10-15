@@ -3,19 +3,20 @@ class Simgrid < Formula
 
   desc "Studies behavior of large-scale distributed systems"
   homepage "https://simgrid.org/"
-  url "https://framagit.org/simgrid/simgrid/uploads/98ec9471211bba09aa87d7866c9acead/simgrid-3.26.tar.gz"
-  sha256 "ac50da1eacc5a53b094a988a8ecde09962c29320f346b45e74dd32ab9d9f3e96"
+  url "https://framagit.org/simgrid/simgrid/uploads/6ca357e80bd4d401bff16367ff1d3dcc/simgrid-3.29.tar.gz"
+  sha256 "83e8afd653555eeb70dc5c0737b88036c7906778ecd3c95806c6bf5535da2ccf"
 
   livecheck do
-    url "https://framagit.org/simgrid/simgrid.git"
-    regex(/^v?(\d+(?:[._]\d+)+)$/i)
+    url :homepage
+    regex(/href=.*?simgrid[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
-    sha256 arm64_big_sur: "483bcf473f05f337322f46d7d9e42f032eec6eea51dbbc9766616f583117a20f"
-    sha256 big_sur:       "e955b530c04845a2411dd827c289ebf3945d45ba00bcc763591f7691ba80becb"
-    sha256 catalina:      "bf748370ffd539df857ae5365563b47a5bf685f6ea7bdcd27c3eaad31bf35d06"
-    sha256 mojave:        "64bc790d3fa33e14d1c9f067f4e047df4fbbcd630a439370adfc8ad39ab5ddd3"
+    sha256 arm64_big_sur: "3bcf1b52202b0bf72913983c86bb8d6b5e842cf20c08ff9f30b5e562812d0ec7"
+    sha256 big_sur:       "ed874d245adffc5455759d716afea6d4152a37df3296e8689b9b6b43a3f1344a"
+    sha256 catalina:      "3553e2e019fe3109b094fd976c9befa272046ebb21856a5a2fd15d95ee054628"
+    sha256 mojave:        "d6718c707ad66eba5d138e3289b50d37f43ff3171799a2e25e69e99309d97400"
+    sha256 x86_64_linux:  "dd8671e3e11762f09e17db9db5492d221e001854947ac3377ce05aa720c249a9"
   end
 
   depends_on "cmake" => :build
@@ -25,35 +26,22 @@ class Simgrid < Formula
   depends_on "pcre"
   depends_on "python@3.9"
 
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
+
   def install
     # Avoid superenv shim references
-    inreplace "src/smpi/smpicc.in", "@CMAKE_C_COMPILER@", "/usr/bin/clang"
-    inreplace "src/smpi/smpicxx.in", "@CMAKE_CXX_COMPILER@", "/usr/bin/clang++"
-
-    # FindPythonInterp is broken in CMake 3.19+
-    # REMOVE ME AT VERSION BUMP (after 3.25)
-    # https://framagit.org/simgrid/simgrid/-/issues/59
-    # https://framagit.org/simgrid/simgrid/-/commit/3a987e0a881dc1a0bb5a6203814f7960a5f4b07e
-    inreplace "CMakeLists.txt", "include(FindPythonInterp)", ""
-    python = Formula["python@3.9"]
-    python_version = python.version
-    # We removed CMake's ability to find Python, so we have to point to it ourselves
-    args = %W[
-      -DPYTHONINTERP_FOUND=TRUE
-      -DPYTHON_EXECUTABLE=#{python.opt_bin}/python3
-      -DPYTHON_VERSION_STRING=#{python_version}
-      -DPYTHON_VERSION_MAJOR=#{python_version.major}
-      -DPYTHON_VERSION_MINOR=#{python_version.minor}
-      -DPYTHON_VERSION_PATCH=#{python_version.patch}
-    ]
-    # End of local workaround, remove the above at version bump
+    inreplace "src/smpi/smpicc.in", "@CMAKE_C_COMPILER@", DevelopmentTools.locate(ENV.cc)
+    inreplace "src/smpi/smpicxx.in", "@CMAKE_CXX_COMPILER@", DevelopmentTools.locate(ENV.cxx)
 
     system "cmake", ".",
                     "-Denable_debug=on",
                     "-Denable_compile_optimizations=off",
                     "-Denable_fortran=off",
-                    *std_cmake_args,
-                    *args # Part of workaround, remove at version bump
+                    *std_cmake_args
     system "make", "install"
 
     bin.find { |f| rewrite_shebang detected_python_shebang, f }

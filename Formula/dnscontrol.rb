@@ -1,8 +1,8 @@
 class Dnscontrol < Formula
   desc "It is system for maintaining DNS zones"
   homepage "https://github.com/StackExchange/dnscontrol"
-  url "https://github.com/StackExchange/dnscontrol/archive/v3.8.1.tar.gz"
-  sha256 "7b517f656c70b1d9ac8766e83e4e9258559f65532c04173ece08e38554903646"
+  url "https://github.com/StackExchange/dnscontrol/archive/v3.12.0.tar.gz"
+  sha256 "2927696096e4b58ef21427fdbecc8aed99e4bfe19a03f63e25bec067734d0c5b"
   license "MIT"
   version_scheme 1
 
@@ -12,17 +12,17 @@ class Dnscontrol < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "beec1217ecd3a92b1a45beebaa84e6ad638ae9760189d033be9ba3eacfbe27f6"
-    sha256 cellar: :any_skip_relocation, big_sur:       "e8dd7b402cb6da72444a2af2f40cf26922324c563ef9393e7cfdb95e06a1cae5"
-    sha256 cellar: :any_skip_relocation, catalina:      "476c460ff0328731ee72e275264a6fcfb6d3bab46434b04427a9c3ac9e8082c2"
-    sha256 cellar: :any_skip_relocation, mojave:        "2bdcd2c5bac3a501873580abb0472abc607a85bf103adceedbb134d69f40e51d"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "0ab5d25f2efb3be5eb8a0048dd55561f7433d8a46aeb1aa7619b80eb58f2e8d6"
+    sha256 cellar: :any_skip_relocation, big_sur:       "e7bec68821ca3a9387aff4cfd8e87ccdb18c89f171da2a5aea51e0aeba26715d"
+    sha256 cellar: :any_skip_relocation, catalina:      "cf7f2cdaf988b0ae9601f3b05a3dc14d5ce03f398b0a02839488e664508e7be6"
+    sha256 cellar: :any_skip_relocation, mojave:        "c0de2e718b6850ae391642f8a271a0b5105e447deee72ddc95915541930d775e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "63cf1329d922e2c5265c23bbb5e30b9ded6913e248fe328de420aca6dd0b1d8a"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args
-    prefix.install_metafiles
+    system "go", "build", *std_go_args(ldflags: "-s -w")
   end
 
   test do

@@ -2,11 +2,11 @@ class Mame < Formula
   desc "Multiple Arcade Machine Emulator"
   homepage "https://mamedev.org/"
   # NOTE: Please keep these values in sync with rom-tools.rb when updating.
-  url "https://github.com/mamedev/mame/archive/mame0230.tar.gz"
-  version "0.230"
-  sha256 "39ea744a9a49acf10990dfc95094663201b8219255c439da4028c57490ab3488"
+  url "https://github.com/mamedev/mame/archive/mame0236.tar.gz"
+  version "0.236"
+  sha256 "c76b973d786311f86922101ab0050dac90af9b0fd614a33c20231e3451c7b2dd"
   license "GPL-2.0-or-later"
-  head "https://github.com/mamedev/mame.git"
+  head "https://github.com/mamedev/mame.git", branch: "master"
 
   # MAME tags (and filenames) are formatted like `mame0226`, so livecheck will
   # report the version like `0226`. We work around this by matching the link
@@ -19,10 +19,11 @@ class Mame < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "778568106622e2078fc21d34ec8b61a221482e1f87dbe7c09a62651465aa832d"
-    sha256 cellar: :any, big_sur:       "f57504dd5cdae4b7d449e395704d10d1dbf5253086421cb4f45be38336a953ba"
-    sha256 cellar: :any, catalina:      "e224a22ba4b9139ed478505b057b7bbeb1a94aa4daa947bed48967f13a2f0882"
-    sha256 cellar: :any, mojave:        "e295457b0c4db3f2b2d7313265878d9d4f7006da500390d8dc2746928f848ebc"
+    sha256 cellar: :any,                 arm64_big_sur: "7e682b3e6fb2b30a5197c014f1b3e56e1a0daea0ec859e892d3c05e86f4a2508"
+    sha256 cellar: :any,                 big_sur:       "aa5065164d99e9ae75491395d1180b392e27eafc5209a6bb9d6cb9fc004557b2"
+    sha256 cellar: :any,                 catalina:      "8717ca403b7781452a483b156851009461ece4905609b82d0eb221a91c735cfc"
+    sha256 cellar: :any,                 mojave:        "c67fd7be123e760ef542e57770219423592e896bf7e7d955ea926f4272ee0d0d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "721fd9120323e227a370558bc9e8241d7ca9bdf7577f86686e2c74cf237db275"
   end
 
   depends_on "glm" => :build
@@ -43,6 +44,16 @@ class Mame < Formula
 
   uses_from_macos "expat"
   uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "gcc" # for C++17
+    depends_on "pulseaudio"
+    depends_on "qt@5"
+    depends_on "sdl2_ttf"
+  end
+
+  fails_with gcc: "5"
+  fails_with gcc: "6"
 
   def install
     # Cut sdl2-config's invalid option.

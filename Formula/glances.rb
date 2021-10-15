@@ -1,18 +1,20 @@
 class Glances < Formula
   desc "Alternative to top/htop"
   homepage "https://nicolargo.github.io/glances/"
-  url "https://files.pythonhosted.org/packages/75/bc/201324869d714e74be62e6968b5d7441239782c7d567dcd52f7a5635a4d9/Glances-3.1.6.2.tar.gz"
-  sha256 "2f9e2127eadbf6b14db5ab3633202157f18cc7aaa21c3dbcf3aa8675c1cac610"
+  url "https://files.pythonhosted.org/packages/2a/93/c2175c56cb4f7c36460058c6f43e733ed85dfa0616c8a2cbfeac528d6d7f/Glances-3.1.7.tar.gz"
+  sha256 "bd282e35df3f29dd1f3f6955489eb7b73b56d92059f6939b1e15ac8cd1581b08"
   license "LGPL-3.0-or-later"
+  revision 1
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "93d5581ed75138ec02fce99be6cb458f55824192a77bf01f810676df612a8c18"
-    sha256 cellar: :any_skip_relocation, big_sur:       "27690378cfd22dfb6b7ace07409abfb0d0ec1ef452492aad352eee852b005258"
-    sha256 cellar: :any_skip_relocation, catalina:      "9b5c8bf188496b2b74ca32b66402cc423dfcd9ce193b9c9c4b3b1bc0246c1275"
-    sha256 cellar: :any_skip_relocation, mojave:        "abc3f5bece445731db56508950a3c841631f835c712fe0c8afed8223b73d4387"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a14a59f4732ccc11865a74bb059d06e12d8f02e442eac8f5464df7d87187962b"
+    sha256 cellar: :any_skip_relocation, big_sur:       "bf357cfaa047f96c4cccd9671dc1c339af5022ae5d30fab2f5e31a267bddd2f8"
+    sha256 cellar: :any_skip_relocation, catalina:      "6e77821dd7393ffbe14484ad40fcaf02446c3f283d8a07d0edfcc5e42bc1e0ad"
+    sha256 cellar: :any_skip_relocation, mojave:        "e785dca2522e2e25b2d70e7da24b1409df1e8aa6ac6c0203bd49405b52722a53"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d320ac2305adbd1cb83a6503928fe26a58dd1e07951703cc34a65b5157ecbe6f"
   end
 
-  depends_on "python@3.9"
+  depends_on "python@3.10"
 
   resource "future" do
     url "https://files.pythonhosted.org/packages/45/0b/38b06fd9b92dc2b68d58b75f900e97884c45bedd2ff83203d933cf5851c9/future-0.18.2.tar.gz"

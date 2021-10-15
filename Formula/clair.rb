@@ -1,31 +1,25 @@
 class Clair < Formula
   desc "Vulnerability Static Analysis for Containers"
   homepage "https://github.com/quay/clair"
-  url "https://github.com/quay/clair/archive/v4.0.5.tar.gz"
-  sha256 "e6ce6ff418bb399ef41b56bd55057d24913ecd96a7039485e1b80cea5387baad"
+  url "https://github.com/quay/clair/archive/v4.3.0.tar.gz"
+  sha256 "56684ae29ce3fd2ad611978f459eaf232718bae1b8e584fba5830a44a2c103d7"
   license "Apache-2.0"
 
   livecheck do
     url :stable
-    strategy :github_latest
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "324ad2b7a26d5bb95edf88f23bc63cdf809305e7dbcef5f4625d226c7cc75511"
-    sha256 cellar: :any_skip_relocation, catalina: "cdc0feb3362b7bfbcebc488bd885f0827dc112ab6b9a2fd5b0c7e32a713013ac"
-    sha256 cellar: :any_skip_relocation, mojave:   "2b4d4802fd7321ab28d7fe7fe1952b9d4e2b7ea81dbb7e6faccd74da6804c643"
+    sha256 cellar: :any_skip_relocation, big_sur:      "64d39f7432c6753108c81d593294d14142a61e98a8fa8bcb173480a97b88e592"
+    sha256 cellar: :any_skip_relocation, catalina:     "60c03d370fe34583680ec75c405c3ba770b3ce4efc3e71ee406569829a706618"
+    sha256 cellar: :any_skip_relocation, mojave:       "37ec0796fbb2aa4adbda9a70c4fd3e59241fc4a29c2d7fd4efb7ff3f4f1265a0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "947c6a051cc12db2362b1d41dea970ef176c9fede5bbd4803b52d88255439378"
   end
 
   depends_on "go" => :build
   depends_on "rpm"
   depends_on "xz"
-
-  # revert back to config.yaml.sample
-  # remove in next release
-  resource "test_resource" do
-    url "https://raw.githubusercontent.com/quay/clair/6e195c99a14139360c8d09f90c94024eb7d27b67/config.yaml.sample"
-    sha256 "4efbe587cdc074d29cfa9fe539d97304a33c28fcaeb986d6c8e4db7f8c705812"
-  end
 
   def install
     ldflags = %W[
@@ -34,13 +28,13 @@ class Clair < Formula
     ].join(" ")
 
     system "go", "build", *std_go_args, "-ldflags", ldflags, "./cmd/clair"
-    (etc/"clair").install resource("test_resource")
+    (etc/"clair").install "config.yaml.sample"
   end
 
   test do
     cp etc/"clair/config.yaml.sample", testpath
     output = shell_output("#{bin}/clair -conf #{testpath}/config.yaml.sample -mode combo 2>&1", 1)
     # requires a Postgres database
-    assert_match "initialized failed: failed to initialize libindex: failed to create ConnPool", output
+    assert_match "service initialization failed: failed to initialize indexer: failed to create ConnPool", output
   end
 end

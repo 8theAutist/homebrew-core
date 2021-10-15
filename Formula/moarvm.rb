@@ -2,9 +2,10 @@ class Moarvm < Formula
   desc "Virtual machine for NQP and Rakudo Perl 6"
   homepage "https://moarvm.org"
   # NOTE: Please keep these values in sync with nqp & rakudo when updating.
-  url "https://github.com/MoarVM/MoarVM/releases/download/2021.02/MoarVM-2021.02.tar.gz"
-  sha256 "19a0c3679e7be8081ddea28a02264be8a821cf624452e35977f8a4b9764d3123"
+  url "https://github.com/MoarVM/MoarVM/releases/download/2021.09/MoarVM-2021.09.tar.gz"
+  sha256 "9d233e62ac8e4d4580359a794f88f4d26edad54781d915f96b31464439a32cba"
   license "Artistic-2.0"
+  revision 1
 
   livecheck do
     url "https://github.com/MoarVM/MoarVM.git"
@@ -12,10 +13,11 @@ class Moarvm < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "d5dfaa9a8c725ee6e24c73033ff14c0aa2ebfd575c233b4989a7073187f52b84"
-    sha256 big_sur:       "eebbd9f0d5abcf241e3117c506d27accdf18b5319d57d021a384cce0e03a68ab"
-    sha256 catalina:      "bf543ff6e53137fac8b9930bdbc3ef727593624e995bb245780938ab12866a28"
-    sha256 mojave:        "3aaba49e0d74dd38a8ac460b9c7239ddd171d7554bdb4bdf5535bad76ab6c82e"
+    sha256 arm64_big_sur: "c5f2d2d7bacda98e06029b38d5826b4efaebe5729f2d70dc282bd13c787692d3"
+    sha256 big_sur:       "73e1c8c6913dbd4517220b0be439ad11fdb416db6bb8ec361b36b857b645f38b"
+    sha256 catalina:      "7dd7acdb735036d925082e907816000d4765f1549c20208ab7cba7395601dcbf"
+    sha256 mojave:        "7f1875146667613ec2095e804ea74112c6d7a764e9136b945a30521823348b66"
+    sha256 x86_64_linux:  "91705c45d1e7b2b2ee02ac1db3e1a147c5ac4fc31df168928b4cade93f53e36e"
   end
 
   depends_on "libatomic_ops"
@@ -26,8 +28,8 @@ class Moarvm < Formula
   conflicts_with "rakudo-star", because: "rakudo-star currently ships with moarvm included"
 
   resource "nqp" do
-    url "https://github.com/Raku/nqp/releases/download/2021.02/nqp-2021.02.tar.gz"
-    sha256 "d24b1dc8c9f5e743787098a19c9d17b75f57dd34d293716d5b15b9105037d4ef"
+    url "https://github.com/Raku/nqp/releases/download/2021.09/nqp-2021.09.tar.gz"
+    sha256 "7f296eecb3417e28a08372642247124ca2413b595f30e959a0c9938a625c82d8"
   end
 
   def install

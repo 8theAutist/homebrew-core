@@ -1,20 +1,20 @@
 class Sile < Formula
   desc "Modern typesetting system inspired by TeX"
-  homepage "https://www.sile-typesetter.org"
-  url "https://github.com/sile-typesetter/sile/releases/download/v0.10.15/sile-0.10.15.tar.xz"
-  sha256 "49b55730effd473c64a8955a903e48f61c51dd7bb862e6d5481193218d1e3c5c"
+  homepage "https://sile-typesetter.org"
+  url "https://github.com/sile-typesetter/sile/releases/download/v0.12.0/sile-0.12.0.tar.xz"
+  sha256 "c983a2b32d171ba392191eb29de2c3b433452d6cb514f270b17a7b3889fb6de6"
   license "MIT"
-  revision 2
 
   bottle do
-    sha256 arm64_big_sur: "72d3d5b07f05e63fa46905ac01d0ca3b43dd7243a7394cf6d049687f496dfd72"
-    sha256 big_sur:       "f60d2f9eb9682c05e2c28e2060cd03a3ab3c7340a64e27d5734179788efce142"
-    sha256 catalina:      "173bedc8deef0b383b42c7f7115cb9ca673d8a614b5accdedbde7b1b469be2cd"
-    sha256 mojave:        "53fbb1d6190196ad6b7d4a4970b3d1872dc104ac53a9661f1071cd35bb751e53"
+    sha256 cellar: :any,                 arm64_big_sur: "46ab35a88b16fd67f7fbe20e6241b1d51457ec3a06f2ff32aac804b40a0f7d94"
+    sha256 cellar: :any,                 big_sur:       "577a2fb134f9d238f97e4ab479991546417bd22d644e78a02f2c6f4b4301b58b"
+    sha256 cellar: :any,                 catalina:      "c53f0f67e11a4c24c0bb6b5b27c00725ebc0497135785220dbef8971d015c5b7"
+    sha256 cellar: :any,                 mojave:        "4dd937145f1e4ff23d779b8e25bcff230fe288da76825b622de7e80a44947426"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "59653464acc2cf9ed9f230bfd962e38c144b68bf3197f0dc2a9f46cd93f0b6a8"
   end
 
   head do
-    url "https://github.com/sile-typesetter/sile.git", shallow: false
+    url "https://github.com/sile-typesetter/sile.git"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
@@ -31,6 +31,7 @@ class Sile < Formula
   depends_on "openssl@1.1"
 
   uses_from_macos "expat"
+  uses_from_macos "git"
   uses_from_macos "zlib"
 
   resource "stdlib" do
@@ -95,15 +96,21 @@ class Sile < Formula
     version "3.0rc1-2"
   end
 
+  # depends on `luasocket`
+  resource "luasec" do
+    url "https://luarocks.org/manifests/brunoos/luasec-1.0.1-1.src.rock"
+    sha256 "0e91f9686ccda7d373d74518da85d22f678a1b0de35e38b4a444041eba53040d"
+  end
+
   resource "penlight" do
-    url "https://luarocks.org/manifests/tieske/penlight-1.9.2-1.src.rock"
-    sha256 "49e7778ba84a5a8ac67fc2a30357f0975fe11241d7cc86df05a5abb18071d5fb"
+    url "https://luarocks.org/manifests/tieske/penlight-1.11.0-1.src.rock"
+    sha256 "4bc3e5a5869313a326fe39f23a6d02c4e13d1780cb4559f0aed04c414b1297cf"
   end
 
   # Depends on luafilesystem and penlight
   resource "cassowary" do
-    url "https://luarocks.org/manifests/simoncozens/cassowary-2.2-1.src.rock"
-    sha256 "feab102d06f57998915a5945e6742246b5955bb65a69d45c2e572d59e6874f51"
+    url "https://luarocks.org/manifests/simoncozens/cassowary-2.3.1-2.src.rock"
+    sha256 "bf2ac4c04999402aab9bfa3b38868514f625a9e79c6884aa724b9560714aa500"
   end
 
   resource "luautf8" do
@@ -114,14 +121,6 @@ class Sile < Formula
   resource "vstruct" do
     url "https://luarocks.org/manifests/deepakjois/vstruct-2.1.1-1.src.rock"
     sha256 "fcfa781a72b9372c37ee20a5863f98e07112a88efea08c8b15631e911bc2b441"
-  end
-
-  # Install luasec last, as this breaks installing other resources for now
-  # https://github.com/luarocks/luarocks/issues/1302
-  # When this is resolved, move back between `luarepl` and `luasocket`
-  resource "luasec" do
-    url "https://luarocks.org/manifests/brunoos/luasec-1.0-1.src.rock"
-    sha256 "b7e18f475c64896fe4921d367adabae765914f7526a68487a5fa6831040e7138"
   end
 
   def install
@@ -142,7 +141,7 @@ class Sile < Formula
     ENV.prepend "LDFLAGS", "-L#{lua.opt_lib}"
 
     zlib_dir = expat_dir = "#{MacOS.sdk_path_if_needed}/usr"
-    on_linux do
+    if OS.linux?
       zlib_dir = Formula["zlib"].opt_prefix
       expat_dir = Formula["expat"].opt_prefix
     end

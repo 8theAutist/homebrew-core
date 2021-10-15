@@ -1,8 +1,8 @@
 class Dar < Formula
   desc "Backup directory tree and files"
   homepage "http://dar.linux.free.fr/doc/index.html"
-  url "https://downloads.sourceforge.net/project/dar/dar/2.6.14/dar-2.6.14.tar.gz"
-  sha256 "d6ecca8feab692521d00d84bcf2e934ad2737909dd794bdd4f40f3c228da77e5"
+  url "https://downloads.sourceforge.net/project/dar/dar/2.7.2/dar-2.7.2.tar.gz"
+  sha256 "973fa977c19b32b1f9ecb62153c810ba8696f644eca048f214c77ad0e8eca255"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,18 +11,18 @@ class Dar < Formula
   end
 
   bottle do
-    sha256 cellar: :any, big_sur:  "6f163404147ed366f1b61505d13959967527ea224f98463b6e2e87ea4d7bd426"
-    sha256 cellar: :any, catalina: "f0c2475f1398a76f313bc3b0e002b1f2d42153dbb3b7d250da0eaa0f06686335"
-    sha256 cellar: :any, mojave:   "17e45df3068bc2d41e87c555fb2fcbbb6decff97f586f801cfe0cfdffa1cee61"
+    sha256 cellar: :any, big_sur:      "1fdd6b3a1928e14d8f912e37ae55e0e3c86186a5da2bc99c107f2c7b8b977c83"
+    sha256 cellar: :any, catalina:     "da74fe3bf555027687c08c1070ded75381c823063d61e041573cf1b97899ce62"
+    sha256 cellar: :any, mojave:       "a68d869a6b947f9a0d72afb03f11d1fae3a3401e7a4cd12737b272dae8988cb3"
+    sha256               x86_64_linux: "cd8313b7fca09d8045b7f6b318b4668f3a986a8ebfc6d5f801883d079de503a3"
   end
 
   depends_on "upx" => :build
   depends_on "libgcrypt"
   depends_on "lzo"
+  uses_from_macos "zlib"
 
   def install
-    ENV.cxx11
-
     system "./configure", "--prefix=#{prefix}",
                           "--disable-build-html",
                           "--disable-dar-static",

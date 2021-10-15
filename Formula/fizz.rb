@@ -1,15 +1,17 @@
 class Fizz < Formula
   desc "C++14 implementation of the TLS-1.3 standard"
   homepage "https://github.com/facebookincubator/fizz"
-  url "https://github.com/facebookincubator/fizz/releases/download/v2021.04.26.00/fizz-v2021.04.26.00.tar.gz"
-  sha256 "7fcce18d4ed5e07a65f816dcdffeee8fc16cd19225731fd72d926c5d7ce6e006"
+  url "https://github.com/facebookincubator/fizz/releases/download/v2021.10.11.00/fizz-v2021.10.11.00.tar.gz"
+  sha256 "0c3b49458408f52263c30ab32796665e5a4950eaa017e9f8fd26f51c5bea189f"
   license "BSD-2-Clause"
   head "https://github.com/facebookincubator/fizz.git"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "50d368766a52e05bc916403b4dbcb06e1821b1972040948499cd6990ccb4b9e3"
-    sha256 cellar: :any, big_sur:       "26c7e3f61af5820aa0fcd27f7cb2952a2b12e7aea9b397411dd26732b2fee780"
-    sha256 cellar: :any, catalina:      "b5c8f6e5eb083ed7ee97da4903588666c86881ddb5628778a98d9eb05388baf5"
+    sha256 cellar: :any,                 arm64_big_sur: "d607def8116de0d330e5256a561093cebb1576d500187f2d1868317a742229cf"
+    sha256 cellar: :any,                 big_sur:       "a90a7576d55320e42e89df54d70d034ee19ec98ce0575e5417b308541a56d19f"
+    sha256 cellar: :any,                 catalina:      "3ec41b4e214e113606cd874e23f606c5413104555983d72cdee651b025afe0e8"
+    sha256 cellar: :any,                 mojave:        "46256e39c743c7383067f948995182dde198f97d9e1569e1a71cea288cbe2d14"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "852a86d20b7f8568b92458bd0f62e1dc870e0d5a2f0638fad9f0d36b0c28081f"
   end
 
   depends_on "cmake" => :build
@@ -22,15 +24,22 @@ class Fizz < Formula
   depends_on "libevent"
   depends_on "libsodium"
   depends_on "lz4"
-  # https://github.com/facebook/folly/issues/1545
-  depends_on macos: :catalina
   depends_on "openssl@1.1"
   depends_on "snappy"
   depends_on "zstd"
 
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
+
   def install
+    args = []
+    args << "-DLIBRT_LIBRARY=/usr/lib/x86_64-linux-gnu/librt.so" if OS.linux?
+
     mkdir "fizz/build" do
-      system "cmake", "..", "-DBUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=ON", *std_cmake_args
+      system "cmake", "..", "-DBUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=ON", *std_cmake_args, *args
       system "make"
       system "make", "install"
     end

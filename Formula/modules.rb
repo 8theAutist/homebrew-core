@@ -1,8 +1,8 @@
 class Modules < Formula
   desc "Dynamic modification of a user's environment via modulefiles"
   homepage "https://modules.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/modules/Modules/modules-4.7.1/modules-4.7.1.tar.bz2"
-  sha256 "a6ab006ccc176ddc5b92659119be68563641fa15d72c518b97becba9f11e201f"
+  url "https://downloads.sourceforge.net/project/modules/Modules/modules-5.0.0/modules-5.0.0.tar.bz2"
+  sha256 "1e4d0d7a64db85f316b5b8ef83b0df5e13e687a0021d3021b571581569ea71f4"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,13 +11,18 @@ class Modules < Formula
   end
 
   bottle do
-    sha256               arm64_big_sur: "8cc933f4ad6ffd306c36f080228d326181ac471e56b92e0c32c75e2c3e95eb9b"
-    sha256               big_sur:       "5d63553037af74beab1d31831b3880622eb2bdf4e981ac67ba20afbfc7b33b02"
-    sha256 cellar: :any, catalina:      "a6257daf6e36156bc6bbde38622778b2b3dabe4681eead1fd238e3aa7b5a71e9"
-    sha256 cellar: :any, mojave:        "9a2dc8c4e84f0c33dfa5c60210fd5716a5f087f5c0624bfd4ad3e6e492bff19b"
+    sha256                               arm64_big_sur: "fc00f6fefbed3d9e02cf6577829429da6cd65f42dc0672b480b6ee5a633cb0ba"
+    sha256                               big_sur:       "c61614ac6c3fc7903748b4cf2720d7024dcf1de5d0c8ef8e6ed005f75359da2d"
+    sha256 cellar: :any,                 catalina:      "b0287fc7e40fe32c6069807702f9ec881b3a152814db7d100005da6bf08ef300"
+    sha256 cellar: :any,                 mojave:        "7244741217d5e4e860dea4bbe2a2a828c22ee4f44e292450acd9a9a67af523bd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7afd9100bd3e96b4ad1e815467c82f46045ded65ad4bd10a8b53bcb718a6bacb"
   end
 
   depends_on "tcl-tk"
+
+  on_linux do
+    depends_on "less"
+  end
 
   def install
     args = %W[
@@ -26,6 +31,12 @@ class Modules < Formula
       --with-tcl=#{Formula["tcl-tk"].opt_lib}
       --without-x
     ]
+
+    if OS.linux?
+      args << "--with-pager=#{Formula["less"].opt_bin}/less"
+      args << "--with-tclsh=#{Formula["tcl-tk"].opt_bin}/tclsh"
+    end
+
     system "./configure", *args
     system "make", "install"
   end
@@ -41,7 +52,12 @@ class Modules < Formula
 
   test do
     assert_match "restore", shell_output("#{bin}/envml --help")
-    output = shell_output("zsh -c 'source #{prefix}/init/zsh; module' 2>&1")
+    shell, cmd = if OS.mac?
+      ["zsh", "source"]
+    else
+      ["sh", "."]
+    end
+    output = shell_output("#{shell} -c '#{cmd} #{prefix}/init/#{shell}; module' 2>&1")
     assert_match version.to_s, output
   end
 end

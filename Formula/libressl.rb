@@ -2,9 +2,9 @@ class Libressl < Formula
   desc "Version of the SSL/TLS protocol forked from OpenSSL"
   homepage "https://www.libressl.org/"
   # Please ensure when updating version the release is from stable branch.
-  url "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.2.5.tar.gz"
-  mirror "https://mirrorservice.org/pub/OpenBSD/LibreSSL/libressl-3.2.5.tar.gz"
-  sha256 "798a65fd61d385e09d559810cdfa46512f8def5919264cfef241a7b086ce7cfe"
+  url "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.3.5.tar.gz"
+  mirror "https://mirrorservice.org/pub/OpenBSD/LibreSSL/libressl-3.3.5.tar.gz"
+  sha256 "0a51393f0df1cf27e070054a2788a4d073339f363d79cd594076a1b4c48be9a5"
   license "OpenSSL"
 
   livecheck do
@@ -13,11 +13,11 @@ class Libressl < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_big_sur: "ee74031a2d77242c7563a3c85db3729b4aaebc9a7013711293977bfc6d475da0"
-    sha256 big_sur:       "a87dff5d8d5aed0ca3446c972c98d5d5e1a6c4eea2e728d1d5e53d32578a5f73"
-    sha256 catalina:      "091ea83e4b3874ad4c4b5fae7bd12d2cb38649d2992d52c0fd568bf5e1d68c4f"
-    sha256 mojave:        "7c77895293158b816cd4a6ff1fbf74ed7c7248c8294bbd836632dd167f3fcd7d"
+    sha256 arm64_big_sur: "bb0b93fb87cb0cb7caf4ace93bebe04e29a923c140375aa013a6a77dd27aad19"
+    sha256 big_sur:       "730c015b9fa817e1885e4da2440f86ee441dabd91e99d0465a70390262361996"
+    sha256 catalina:      "ce70f350875bc9fab948233b9d30c1545083e9a8204d24d769252f89fbdbccde"
+    sha256 mojave:        "af9065afe8ec39458e0227e2d874e08971e25763944ddd2d61fc9501f331b592"
+    sha256 x86_64_linux:  "a4e5d16b1e6ae117b89ea163e025648c1c2683c100ef2ce9e89f1ade402a0b77"
   end
 
   head do
@@ -29,6 +29,10 @@ class Libressl < Formula
   end
 
   keg_only :provided_by_macos
+
+  on_linux do
+    keg_only "it conflicts with OpenSSL formula"
+  end
 
   def install
     args = %W[
@@ -47,7 +51,7 @@ class Libressl < Formula
   end
 
   def post_install
-    on_macos do
+    if OS.mac?
       ohai "Regenerating CA certificate bundle from keychain, this may take a while..."
 
       keychains = %w[

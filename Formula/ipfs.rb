@@ -2,8 +2,8 @@ class Ipfs < Formula
   desc "Peer-to-peer hypermedia protocol"
   homepage "https://ipfs.io/"
   url "https://github.com/ipfs/go-ipfs.git",
-      tag:      "v0.8.0",
-      revision: "ce693d7e81e0206b3afbce30333c21a36a9f094b"
+      tag:      "v0.10.0",
+      revision: "64b532fbb14145557dda7cb7986daea1e156f76d"
   license all_of: [
     "MIT",
     any_of: ["MIT", "Apache-2.0"],
@@ -16,42 +16,25 @@ class Ipfs < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:  "26b96618554fa924bf04a04b0f3c68714b92b1493f9391c973b7eb7b3409a744"
-    sha256 cellar: :any_skip_relocation, catalina: "f75c5837fecebbeeb36be86091e719d85b0922654d406753bfe3c4f7f4a2e1a9"
-    sha256 cellar: :any_skip_relocation, mojave:   "868371961578f442159865ff5111d778dbc730cda71058f942cbb354e6a46029"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "976419cbae8a7d319812f22f21067bc3ed592d984d91e09a2a5eb6b92ec3c702"
+    sha256 cellar: :any_skip_relocation, big_sur:       "8c9e173c657f3286c06d0456c8f603b3c3a2f13664a960a7b62cf8f1e1aa253d"
+    sha256 cellar: :any_skip_relocation, catalina:      "83669d4ead8a9837e27cb08abc146d9b61ebb39169744e02a1253a09bbf1e74d"
+    sha256 cellar: :any_skip_relocation, mojave:        "2921ea76d75fc514b74c0230f8f2a7ea909a63d84543a03776e1dbbc50f35e18"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ece5b0718dbe752e685c8f6c1df0ba0d92bf771305e6ce782f30fa156a8d4e6f"
   end
 
-  depends_on "go@1.14" => :build
+  depends_on "go" => :build
 
   def install
-    ENV["GOPATH"] = buildpath
-    (buildpath/"src/github.com/ipfs/go-ipfs").install buildpath.children
-    cd("src/github.com/ipfs/go-ipfs") { system "make", "install" }
-    bin.install "bin/ipfs"
+    system "make", "build"
+    bin.install "cmd/ipfs/ipfs"
 
-    cd("src/github.com/ipfs/go-ipfs") { bash_completion.install "misc/completion/ipfs-completion.bash" }
+    bash_output = Utils.safe_popen_read(bin/"ipfs", "commands", "completion", "bash")
+    (bash_completion/"ipfs-completion.bash").write bash_output
   end
 
-  plist_options manual: "ipfs daemon"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>Label</key>
-        <string>#{plist_name}</string>
-        <key>ProgramArguments</key>
-        <array>
-          <string>#{opt_bin}/ipfs</string>
-          <string>daemon</string>
-        </array>
-        <key>RunAtLoad</key>
-        <true/>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"ipfs", "daemon"]
   end
 
   test do

@@ -2,8 +2,8 @@ class KubernetesCli < Formula
   desc "Kubernetes command-line interface"
   homepage "https://kubernetes.io/"
   url "https://github.com/kubernetes/kubernetes.git",
-      tag:      "v1.21.0",
-      revision: "cb303e613a121a29364f75cc67d3d580833a7479"
+      tag:      "v1.22.2",
+      revision: "8b5a19147530eaac9476b0ab82980b4088bbc1b2"
   license "Apache-2.0"
   head "https://github.com/kubernetes/kubernetes.git"
 
@@ -13,14 +13,16 @@ class KubernetesCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b9738e0e124ed9f41246b226f7b35d3ff1690cf490cb0de60df3832fba6033b9"
-    sha256 cellar: :any_skip_relocation, big_sur:       "9af94c3f27d4a8d95fa874453c30208f8fff41becb19668260099dcd2708ec61"
-    sha256 cellar: :any_skip_relocation, catalina:      "d124e2ae0aa980f93648f325715ab88b09a9df9213f6a448e816630403271896"
-    sha256 cellar: :any_skip_relocation, mojave:        "6286ea1e71812947b61921a11c186f9d68aeb2fac012f8334d404cb97c71acc0"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "172cf98338a33a49f1526596df4c7edbad42ef4a48ae2b3da93902bc6ab06dec"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2c7bf6d0518f32822dabfe86c0c7a6fd54130024c2e632a0182e70ca4b3d1ab9"
+    sha256 cellar: :any_skip_relocation, catalina:      "531bce5f3d91144060aad50b10db2742e40dc93db084d6dbfd4b4bb0a27788ab"
+    sha256 cellar: :any_skip_relocation, mojave:        "5a36702c6abeb05683b5c0dc57255c7dfcc49191c0bae0b35b29f62ccb8c71dd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "583a1b3a8a0cf82458861dbd683087d58f56fede759db2c34984459388a305d9"
   end
 
   depends_on "bash" => :build
-  depends_on "go" => :build
+  depends_on "coreutils" => :build
+  depends_on "go@1.16" => :build
 
   uses_from_macos "rsync" => :build
 
@@ -29,6 +31,7 @@ class KubernetesCli < Formula
     rm_rf ".brew_home"
 
     # Make binary
+    ENV.prepend_path "PATH", Formula["coreutils"].libexec/"gnubin" # needs GNU date
     system "make", "WHAT=cmd/kubectl"
     bin.install "_output/bin/kubectl"
 

@@ -1,15 +1,15 @@
 class Evince < Formula
   desc "GNOME document viewer"
   homepage "https://wiki.gnome.org/Apps/Evince"
-  url "https://download.gnome.org/sources/evince/40/evince-40.1.tar.xz"
-  sha256 "7a666363c350af2e3bbba7f14b3c1befc5012f9ed3d9d073447f4c59f33dcf2d"
+  url "https://download.gnome.org/sources/evince/41/evince-41.2.tar.xz"
+  sha256 "95abad0d6feeac9560db3ab80ba7c5eabb1fdf1ca0e3b3c93339af05453a24d8"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_big_sur: "066464147690e5cf4542f59766596f310e33d31277854151d98576dbeb38da6f"
-    sha256 big_sur:       "bc38c271ec13caed62c42adebe9ebc20468f69c1fc822dd2656310f2955049c8"
-    sha256 catalina:      "dd9e4b8a15bb8c2228ae55ff06a136988ed926d3c0bb19a9035aa838bb77d6ea"
-    sha256 mojave:        "a27f48b63081927d0d616ae477bd448893a07a652c0f0b88c395941ced7d8d63"
+    sha256 arm64_big_sur: "a28c94396bd1929ab1d0cd167d80e3ca438f5fa57349c471095ae02101993e5a"
+    sha256 big_sur:       "7e3cdcb6113ebed08f69bf2832022e5c13f8bf49b039e11aee40ec449fb4c7df"
+    sha256 catalina:      "b6f7b1321a1a9eb72ff71f63953af22c8f7b956916a5f7a82ebb3647850ae0f1"
+    sha256 mojave:        "39946fe1263fbc1eeb1734c09f037336dff6a97f6eedf6b555757ad3e2847c59"
   end
 
   depends_on "gobject-introspection" => :build
